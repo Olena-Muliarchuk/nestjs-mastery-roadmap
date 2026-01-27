@@ -17,7 +17,7 @@ export class SongsService {
     return await this.songRepository.save(song);
   }
 
-  async getAllSongs(): Promise<Song[]> {
+  async findAll(): Promise<Song[]> {
     return await this.songRepository.find();
   }
 }

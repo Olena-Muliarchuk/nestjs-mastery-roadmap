@@ -9,7 +9,7 @@ export class SongsController {
 
   @Get()
   getAll(): Promise<Song[]> {
-    return this.songsService.getAllSongs();
+    return this.songsService.findAll();
   }
 
   @Post()
