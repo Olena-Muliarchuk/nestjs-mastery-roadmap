@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsInt,
-  Min,
-  IsDateString,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsInt, Min, IsDateString } from 'class-validator';
 
 export class CreateSongDto {
   @IsString({ message: 'Name is string' })

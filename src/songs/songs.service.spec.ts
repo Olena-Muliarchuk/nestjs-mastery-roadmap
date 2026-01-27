@@ -14,9 +14,7 @@ describe('SongsService', () => {
       Promise.resolve({
         id: 1,
         ...song,
-        releasedDate: song.releasedDate
-          ? new Date(song.releasedDate)
-          : undefined,
+        releasedDate: song.releasedDate ? new Date(song.releasedDate) : undefined,
       }),
     ),
 
