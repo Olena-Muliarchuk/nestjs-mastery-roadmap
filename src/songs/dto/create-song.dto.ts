@@ -5,9 +5,9 @@ export class CreateSongDto {
   @IsNotEmpty()
   readonly title: string;
 
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
-  readonly artist: string;
+  readonly artist: number;
 
   @IsDateString()
   @IsNotEmpty()

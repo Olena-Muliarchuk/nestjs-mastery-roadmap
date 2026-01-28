@@ -5,6 +5,7 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Song } from './song.entity';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { UpdateSongDto } from './dto/update-song.dto';
+import { Artist } from 'src/artists/entities/artist.entity';
 
 @Injectable()
 export class SongsService {
@@ -14,17 +15,27 @@ export class SongsService {
   ) {}
 
   async create(songDto: CreateSongDto): Promise<Song> {
-    const song = this.songRepository.create(songDto);
+    const { artist, ...rest } = songDto;
+
+    const song = this.songRepository.create({
+      ...rest,
+      artist: { id: artist } as Artist,
+    });
 
     return await this.songRepository.save(song);
   }
 
   async paginate(options: IPaginationOptions): Promise<Pagination<Song>> {
-    return paginate<Song>(this.songRepository, options);
+    return paginate<Song>(this.songRepository, options, {
+      relations: ['artist'],
+    });
   }
 
   async findOne(id: number): Promise<Song> {
-    const song = await this.songRepository.findOneBy({ id });
+    const song = await this.songRepository.findOne({
+      where: { id },
+      relations: ['artist'],
+    });
     if (!song) {
       throw new HttpException('Song not found', HttpStatus.NOT_FOUND);
     }
@@ -36,7 +47,15 @@ export class SongsService {
     if (Object.keys(recordToUpdate).length === 0) {
       throw new HttpException('Provide at least one field to update', HttpStatus.BAD_REQUEST);
     }
-    const result = await this.songRepository.update(id, recordToUpdate);
+
+    const { artist, releasedDate, ...rest } = recordToUpdate;
+
+    const updateData = {
+      ...rest,
+      ...(artist ? { artist: { id: artist } as Artist } : {}),
+      ...(releasedDate ? { releasedDate: new Date(releasedDate) } : {}),
+    };
+    const result = await this.songRepository.update(id, updateData);
 
     if (result.affected === 0) {
       throw new HttpException('Song not found', HttpStatus.NOT_FOUND);

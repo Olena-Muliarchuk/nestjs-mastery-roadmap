@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SongsModule } from './songs/songs.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateEnv } from './env.validation';
+import { ArtistsModule } from './artists/artists.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { validateEnv } from './env.validation';
     }),
     SongsModule,
     TasksModule,
+    ArtistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -74,7 +74,7 @@ describe('SongsController', () => {
   it('should create a song', async () => {
     const dto: CreateSongDto = {
       title: 'T',
-      artist: 'A',
+      artist: 1,
       duration: 100,
       releasedDate: '2022-01-01',
     };
