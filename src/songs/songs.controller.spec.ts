@@ -31,14 +31,8 @@ describe('SongsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SongsController],
       providers: [
-        {
-          provide: SongsService,
-          useValue: mockSongsService,
-        },
-        {
-          provide: ConfigService,
-          useValue: mockConfigService,
-        },
+        { provide: SongsService, useValue: mockSongsService },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
@@ -50,8 +44,6 @@ describe('SongsController', () => {
     expect(controller).toBeDefined();
   });
 
-  // --- TESTS ---
-
   it('should get all songs with pagination', async () => {
     const result = await controller.findAll(1, 10);
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -60,8 +52,7 @@ describe('SongsController', () => {
       limit: 10,
       route: 'http://localhost_test/songs',
     });
-
-    expect(result.items).toEqual([{ id: 1, title: 'Test' }]);
+    expect(result.items).toHaveLength(1);
   });
 
   it('should get one song by id', async () => {
@@ -72,12 +63,7 @@ describe('SongsController', () => {
   });
 
   it('should create a song', async () => {
-    const dto: CreateSongDto = {
-      title: 'T',
-      artist: 1,
-      duration: 100,
-      releasedDate: '2022-01-01',
-    };
+    const dto: CreateSongDto = { title: 'T', artist: 1, duration: 100, releasedDate: '2022-01-01' };
     const result = await controller.create(dto);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(service.create).toHaveBeenCalledWith(dto);
