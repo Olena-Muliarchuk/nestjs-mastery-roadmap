@@ -9,6 +9,7 @@ import {
   Param,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
@@ -16,6 +17,7 @@ import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
 import { UpdateSongDto } from './dto/update-song.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('songs')
 export class SongsController {
@@ -41,6 +43,7 @@ export class SongsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   create(@Body() createSongDto: CreateSongDto): Promise<Song> {
     return this.songsService.create(createSongDto);
   }
