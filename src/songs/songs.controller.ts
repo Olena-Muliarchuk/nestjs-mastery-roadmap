@@ -18,6 +18,7 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from '../auth/decorators/user.decorator';
 
 @Controller('songs')
 export class SongsController {
@@ -44,7 +45,8 @@ export class SongsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Body() createSongDto: CreateSongDto): Promise<Song> {
+  create(@Body() createSongDto: CreateSongDto, @User() user: any): Promise<Song> {
+    console.log(user);
     return this.songsService.create(createSongDto);
   }
 
