@@ -147,7 +147,3 @@ src/
 ## 👤 Author
 
 This project is built as part of an intensive **NestJS Mentorship Program**.
-
-```
-
-```
