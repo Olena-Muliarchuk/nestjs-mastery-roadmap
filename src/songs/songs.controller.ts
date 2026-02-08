@@ -19,6 +19,9 @@ import { ConfigService } from '@nestjs/config';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorators/user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Role } from '../auth/enums/role.enum';
 
 @Controller('songs')
 export class SongsController {
@@ -61,6 +64,8 @@ export class SongsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.Admin)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.songsService.delete(id);
   }
