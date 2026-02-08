@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SongsModule } from './songs/songs.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -32,7 +31,6 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     SongsModule,
-    TasksModule,
     ArtistsModule,
     UsersModule,
     AuthModule,
