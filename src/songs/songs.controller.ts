@@ -22,6 +22,7 @@ import { User } from '../auth/decorators/user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Role } from '../auth/enums/role.enum';
+import type { ActiveUser } from '../auth//interfaces/active-user.interface';
 
 @Controller('songs')
 export class SongsController {
@@ -48,7 +49,7 @@ export class SongsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Body() createSongDto: CreateSongDto, @User() user: any): Promise<Song> {
+  create(@Body() createSongDto: CreateSongDto, @User() user: ActiveUser): Promise<Song> {
     console.log(user);
     return this.songsService.create(createSongDto);
   }
