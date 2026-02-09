@@ -21,7 +21,7 @@ describe('SongsService', () => {
     ),
 
     findOne: jest.fn().mockImplementation((options) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const id = options.where.id;
       if (id === 1) {
         return Promise.resolve({
