@@ -1,77 +1,21 @@
 # Dependencies
 node_modules
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
 
-# Build outputs
+# Build
 dist
 build
-out
-.next
-.nuxt
 
-# Test coverage
+# Coverage
 coverage
-.nyc_output
 
-# Environment & Config
-.env
-.env.*
-!.env.example
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# Env
+.env*
 
-# Migrations
+# Database migrations (auto-generated)
 src/db/migrations/*.ts
 **/migrations/*.ts
-
-# Logs
-*.log
-logs
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE
-.idea
-.vscode
-*.swp
-*.swo
-*~
-
-# Docker
-.dockerignore
-Dockerfile*
-docker-compose*.yml
-
-# Git
-.git
-.gitignore
-.gitattributes
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Generated files
-*.generated.ts
-*.gen.ts
-schema.prisma.generated
-
-# Documentation builds
-docs/build
-.docusaurus
-
-# Temporary files
-tmp
-temp
-*.tmp
-*.temp
-
-# Lock files for prettier itself
-.prettierignore
