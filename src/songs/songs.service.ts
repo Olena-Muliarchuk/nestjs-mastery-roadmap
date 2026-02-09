@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSongDto } from './dto/create-song.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -12,14 +12,20 @@ export class SongsService {
   constructor(
     @InjectRepository(Song)
     private songRepository: Repository<Song>,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
   ) {}
 
   async create(songDto: CreateSongDto): Promise<Song> {
-    const { artist, ...rest } = songDto;
+    const artist = await this.artistRepository.findOneBy({ id: songDto.artist });
+
+    if (!artist) {
+      throw new NotFoundException('Artist not found');
+    }
 
     const song = this.songRepository.create({
-      ...rest,
-      artist: { id: artist } as Artist,
+      ...songDto,
+      artist: artist,
     });
 
     return await this.songRepository.save(song);
@@ -50,11 +56,21 @@ export class SongsService {
 
     const { artist, releasedDate, ...rest } = recordToUpdate;
 
+    let artistEntity: Artist | null = null;
+
+    if (artist) {
+      artistEntity = await this.artistRepository.findOneBy({ id: artist });
+      if (!artistEntity) {
+        throw new NotFoundException('Artist not found');
+      }
+    }
+
     const updateData = {
       ...rest,
-      ...(artist ? { artist: { id: artist } as Artist } : {}),
+      ...(artistEntity ? { artist: artistEntity } : {}),
       ...(releasedDate ? { releasedDate: new Date(releasedDate) } : {}),
     };
+
     const result = await this.songRepository.update(id, updateData);
 
     if (result.affected === 0) {
