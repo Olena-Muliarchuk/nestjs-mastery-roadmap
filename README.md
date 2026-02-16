@@ -4,7 +4,7 @@
 
 # 🎵 NestJS Music API (Zero to Hero)
 
-This is an educational project designed to guide a developer from "Hello World" to **Scilled backend developer** using the **NestJS** framework.
+This is an educational project designed to guide a developer from "Hello World" to **Skilled backend developer** using the **NestJS** framework.
 
 I'm building a **RESTful API for a Music Streaming Platform**, where users can browse a catalog of songs and artists, while administrators manage the content. The project emphasizes **Best Practices**, **Security**, and **Scalability**.
 
@@ -95,28 +95,30 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **DTOs:** Input validation using `class-validator`
 * [x] **Serialization:** Response transformation (`@Exclude` password) using `ClassSerializerInterceptor`
 
-### 🟡 Block 3: Database & ORM
+### 🟢 Block 3: Database & ORM
 
 * [x] **TypeORM Setup:** PostgreSQL connection
-* [x] **Entities:** `User`, `Song`, `Artist` models
-* [x] **Relations:** One-to-Many relationships
-* [ ] **Migrations:** Database version control (Current status: `synchronize: true`)
+* [x] **Entities:** `User`, `Song`, `Artist`, `Playlist` models
+* [x] **Relations:** One-to-Many & Many-to-Many (Playlists <-> Songs)
+* [x] **Migrations:** Database version control (Current status: `synchronize: false`)
+* [x] **Pagination:** Implementing `nestjs-typeorm-paginate`
 
-### 🟡 Block 4: Security & Auth (Current Focus 📍)
+### 🟢 Block 4: Security & Auth
 
 * [x] **Users Module:** User creation & password hashing (`bcrypt`)
 * [x] **Authentication:** Login logic & JWT generation
 * [x] **JWT Strategy:** Passport integration, Bearer Token validation
 * [x] **Guards:** Protecting routes with `AuthGuard`
-* [ ] **Custom Decorators:** `@User()` decorator for better DX
-* [ ] **Authorization (RBAC):** `Admin` vs `User` roles, `RolesGuard`
+* [x] **Custom Decorators:** `@User()` & `@Roles()` decorators
+* [x] **Authorization (RBAC):** `Admin` vs `User` roles, `RolesGuard`
 
-### ⚪️ Block 5: Advanced Patterns
+### 🟡 Block 5: Advanced Patterns (Current Focus 📍)
 
 * [x] **ConfigModule:** Environment validation with **Zod** (Implemented early for stability)
+* [ ] **Ownership Logic:** Protecting User Resources
+* [ ] **File Upload:** Handling images/audio files with Multer
 * [ ] **Caching:** Redis integration
 * [ ] **Task Scheduling:** Cron jobs
-* [ ] **File Upload:** Handling images/audio files
 
 ### ⚪️ Block 6: Testing & DevOps
 
@@ -138,6 +140,7 @@ src/
 ├── users/               # User Management (Entities, Services)
 ├── songs/               # Songs Catalog (CRUD)
 ├── artists/             # Artists Management
+├── playlists/           # Playlists (Many-to-Many relations)
 └── common/              # Shared Utilities (Decorators, Filters)
 
 ```
