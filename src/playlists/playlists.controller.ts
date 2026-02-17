@@ -22,6 +22,7 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorators/user.decorator';
 import type { ActiveUser } from '../auth/interfaces/active-user.interface';
+import { PlaylistOwnerGuard } from './guards/playlist-owner.guard';
 
 @Controller('playlists')
 export class PlaylistsController {
@@ -50,6 +51,7 @@ export class PlaylistsController {
   }
 
   @Patch(':id')
+  @UseGuards(PlaylistOwnerGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePlaylistDto: UpdatePlaylistDto,
@@ -58,6 +60,7 @@ export class PlaylistsController {
   }
 
   @Delete(':id')
+  @UseGuards(PlaylistOwnerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
     return this.playlistsService.remove(id);
