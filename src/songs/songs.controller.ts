@@ -22,8 +22,10 @@ import { User } from '../auth/decorators/user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Role } from '../auth/enums/role.enum';
-import type { ActiveUser } from '../auth//interfaces/active-user.interface';
+import type { ActiveUser } from '../auth/interfaces/active-user.interface';
+import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('songs')
 @Controller('songs')
 export class SongsController {
   constructor(
@@ -32,6 +34,7 @@ export class SongsController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all songs with pagination' })
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
@@ -48,6 +51,8 @@ export class SongsController {
   }
 
   @Post()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new song' })
   @UseGuards(AuthGuard('jwt'))
   create(@Body() createSongDto: CreateSongDto, @User() user: ActiveUser): Promise<Song> {
     console.log(user);
@@ -55,16 +60,23 @@ export class SongsController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a song by ID' })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Song> {
     return this.songsService.findOne(id);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a song' })
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.Admin)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSongDto: UpdateSongDto) {
     return this.songsService.update(id, updateSongDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a song (Admin only)' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.Admin)
   delete(@Param('id', ParseIntPipe) id: number) {
