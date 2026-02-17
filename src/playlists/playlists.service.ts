@@ -6,6 +6,7 @@ import { Playlist } from './entities/playlist.entity';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { Song } from 'src/songs/song.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ActiveUser } from 'src/auth/interfaces/active-user.interface';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()
@@ -15,16 +16,9 @@ export class PlaylistsService {
     private playlistRepository: Repository<Playlist>,
     @InjectRepository(Song)
     private songRepository: Repository<Song>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
   ) {}
 
-  async create(playlistDto: CreatePlaylistDto): Promise<Playlist> {
-    const user = await this.usersRepository.findOneBy({ id: playlistDto.user });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  async create(playlistDto: CreatePlaylistDto, user: ActiveUser): Promise<Playlist> {
     let songs: Song[] = [];
     if (playlistDto.songs && playlistDto.songs.length > 0) {
       songs = await this.songRepository.find({
@@ -39,7 +33,7 @@ export class PlaylistsService {
     const playlist = this.playlistRepository.create({
       name: playlistDto.name,
       songs: songs,
-      user: user,
+      user: { id: user.userId } as User,
     });
 
     return await this.playlistRepository.save(playlist);

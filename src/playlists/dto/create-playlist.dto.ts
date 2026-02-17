@@ -9,8 +9,4 @@ export class CreatePlaylistDto {
   @IsNumber({}, { each: true })
   @IsNotEmpty()
   readonly songs: number[];
-
-  @IsNumber()
-  @IsNotEmpty()
-  readonly user: number;
 }

@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Query,
   DefaultValuePipe,
+  UseGuards,
 } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
@@ -18,14 +19,21 @@ import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { Playlist } from './entities/playlist.entity';
 import { DeleteResult } from 'typeorm';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '../auth/decorators/user.decorator';
+import type { ActiveUser } from '../auth/interfaces/active-user.interface';
 
 @Controller('playlists')
 export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
 
   @Post()
-  create(@Body() createPlaylistDto: CreatePlaylistDto): Promise<Playlist> {
-    return this.playlistsService.create(createPlaylistDto);
+  @UseGuards(AuthGuard('jwt'))
+  create(
+    @Body() createPlaylistDto: CreatePlaylistDto,
+    @User() user: ActiveUser,
+  ): Promise<Playlist> {
+    return this.playlistsService.create(createPlaylistDto, user);
   }
 
   @Get()
