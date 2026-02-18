@@ -20,7 +20,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
-    .setTitle('Misic API')
+    .setTitle('Music API')
     .setDescription('The NestJS Music API description')
     .setVersion('1.0')
     .addBearerAuth()
