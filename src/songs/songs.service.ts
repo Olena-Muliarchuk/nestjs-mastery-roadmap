@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSongDto } from './dto/create-song.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult, In } from 'typeorm';
 import { Song } from './song.entity';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { UpdateSongDto } from './dto/update-song.dto';
@@ -17,15 +17,13 @@ export class SongsService {
   ) {}
 
   async create(songDto: CreateSongDto): Promise<Song> {
-    const artist = await this.artistRepository.findOneBy({ id: songDto.artist });
-
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
+    const artists = await this.artistRepository.findBy({
+      id: In(songDto.artists),
+    });
 
     const song = this.songRepository.create({
       ...songDto,
-      artist: artist,
+      artists: artists,
     });
 
     return await this.songRepository.save(song);
@@ -33,14 +31,14 @@ export class SongsService {
 
   async paginate(options: IPaginationOptions): Promise<Pagination<Song>> {
     return paginate<Song>(this.songRepository, options, {
-      relations: ['artist'],
+      relations: ['artists'],
     });
   }
 
   async findOne(id: number): Promise<Song> {
     const song = await this.songRepository.findOne({
       where: { id },
-      relations: ['artist'],
+      relations: ['artists'],
     });
     if (!song) {
       throw new HttpException('Song not found', HttpStatus.NOT_FOUND);
@@ -50,26 +48,13 @@ export class SongsService {
   }
 
   async update(id: number, recordToUpdate: UpdateSongDto): Promise<UpdateResult> {
-    if (Object.keys(recordToUpdate).length === 0) {
-      throw new HttpException('Provide at least one field to update', HttpStatus.BAD_REQUEST);
+    const { artists: _artists, releasedDate, ...rest } = recordToUpdate;
+
+    const updateData: Partial<Song> = { ...rest };
+
+    if (releasedDate) {
+      updateData.releasedDate = new Date(releasedDate);
     }
-
-    const { artist, releasedDate, ...rest } = recordToUpdate;
-
-    let artistEntity: Artist | null = null;
-
-    if (artist) {
-      artistEntity = await this.artistRepository.findOneBy({ id: artist });
-      if (!artistEntity) {
-        throw new NotFoundException('Artist not found');
-      }
-    }
-
-    const updateData = {
-      ...rest,
-      ...(artistEntity ? { artist: artistEntity } : {}),
-      ...(releasedDate ? { releasedDate: new Date(releasedDate) } : {}),
-    };
 
     const result = await this.songRepository.update(id, updateData);
 
