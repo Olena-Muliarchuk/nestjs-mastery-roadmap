@@ -12,6 +12,7 @@ import { PlaylistsModule } from './playlists/playlists.module';
 import { AdminModule } from './admin/admin.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { join } from 'path';
     AuthModule,
     PlaylistsModule,
     AdminModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
