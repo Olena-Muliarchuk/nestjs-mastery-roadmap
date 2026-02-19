@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSongDto } from './dto/create-song.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult, In, ILike, FindManyOptions } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult, In } from 'typeorm';
 import { Song } from './song.entity';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { Artist } from 'src/artists/entities/artist.entity';
+import { FilterSongDto } from './dto/filter-song.dto';
 
 @Injectable()
 export class SongsService {
@@ -29,20 +30,29 @@ export class SongsService {
     return await this.songRepository.save(song);
   }
 
-  async paginate(options: IPaginationOptions, title?: string): Promise<Pagination<Song>> {
-    const searchOptions: FindManyOptions<Song> = {
-      relations: ['artists'],
-    };
+  async paginate(options: IPaginationOptions, filterDto: FilterSongDto): Promise<Pagination<Song>> {
+    const queryBuilder = this.songRepository.createQueryBuilder('song');
 
-    if (title) {
-      searchOptions.where = [
-        {
-          title: ILike(`%${title}%`),
-        },
-      ];
+    // 'song.artists' - name field in  song.entity.ts, 'artist' - alias for table
+    queryBuilder.leftJoinAndSelect('song.artists', 'artist');
+
+    if (filterDto.title) {
+      queryBuilder.andWhere('song.title ILIKE :title', {
+        title: `%${filterDto.title}%`,
+      });
     }
 
-    return paginate<Song>(this.songRepository, options, searchOptions);
+    if (filterDto.artist) {
+      queryBuilder.andWhere('artist.name ILIKE :artist', {
+        artist: `%${filterDto.artist}%`,
+      });
+    }
+
+    if (filterDto.sortOrder) {
+      queryBuilder.orderBy('song.releasedDate', filterDto.sortOrder);
+    }
+
+    return paginate<Song>(queryBuilder, options);
   }
 
   async findOne(id: number): Promise<Song> {

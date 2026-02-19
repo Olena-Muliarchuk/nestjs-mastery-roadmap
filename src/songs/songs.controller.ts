@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Query,
-  DefaultValuePipe,
   ParseIntPipe,
   Param,
   Put,
@@ -24,6 +23,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Role } from '../auth/enums/role.enum';
 import type { ActiveUser } from '../auth/interfaces/active-user.interface';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { FilterSongDto } from './dto/filter-song.dto';
 
 @ApiTags('songs')
 @Controller('songs')
@@ -35,22 +35,16 @@ export class SongsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all songs with pagination' })
-  findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
-    @Query('title') title?: string,
-  ): Promise<Pagination<Song>> {
-    limit = limit > 100 ? 100 : limit;
-
+  findAll(@Query() filterDto: FilterSongDto): Promise<Pagination<Song>> {
     const baseUrl = this.configService.get<string>('BASE_URL');
 
     return this.songsService.paginate(
       {
-        page,
-        limit,
+        page: filterDto.page,
+        limit: filterDto.limit > 100 ? 100 : filterDto.limit,
         route: `${baseUrl}/songs`,
       },
-      title,
+      filterDto,
     );
   }
 
