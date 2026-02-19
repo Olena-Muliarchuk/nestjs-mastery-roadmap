@@ -38,16 +38,20 @@ export class SongsController {
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Query('title') title?: string,
   ): Promise<Pagination<Song>> {
     limit = limit > 100 ? 100 : limit;
 
     const baseUrl = this.configService.get<string>('BASE_URL');
 
-    return this.songsService.paginate({
-      page,
-      limit,
-      route: `${baseUrl}/songs`,
-    });
+    return this.songsService.paginate(
+      {
+        page,
+        limit,
+        route: `${baseUrl}/songs`,
+      },
+      title,
+    );
   }
 
   @Post()

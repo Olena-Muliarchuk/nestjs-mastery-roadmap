@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSongDto } from './dto/create-song.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult, In } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult, In, ILike, FindManyOptions } from 'typeorm';
 import { Song } from './song.entity';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { UpdateSongDto } from './dto/update-song.dto';
@@ -29,10 +29,20 @@ export class SongsService {
     return await this.songRepository.save(song);
   }
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<Song>> {
-    return paginate<Song>(this.songRepository, options, {
+  async paginate(options: IPaginationOptions, title?: string): Promise<Pagination<Song>> {
+    const searchOptions: FindManyOptions<Song> = {
       relations: ['artists'],
-    });
+    };
+
+    if (title) {
+      searchOptions.where = [
+        {
+          title: ILike(`%${title}%`),
+        },
+      ];
+    }
+
+    return paginate<Song>(this.songRepository, options, searchOptions);
   }
 
   async findOne(id: number): Promise<Song> {
