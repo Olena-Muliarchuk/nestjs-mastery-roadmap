@@ -6,18 +6,20 @@
 
 This is an educational project designed to guide a developer from "Hello World" to **Skilled backend developer** using the **NestJS** framework.
 
-I'm building a **RESTful API for a Music Streaming Platform**, where users can browse a catalog of songs and artists, while administrators manage the content. The project emphasizes **Best Practices**, **Security**, and **Scalability**.
+I'm building a **RESTful API for a Music Streaming Platform**, where users can browse a catalog of songs and artists, while administrators manage the content. The project emphasizes **Clean Architecture**, **Best Practices**, **Security**, and **Scalability**.
 
 ---
 
 ## 🛠 Tech Stack
 
 - **Framework:** [NestJS](https://nestjs.com/) (Modular Architecture)
-- **Language:** TypeScript
+- **Language:** TypeScript (Strict Mode)
 - **Database:** PostgreSQL (via Docker)
-- **ORM:** TypeORM (Entities, Relations, Active Record pattern)
-- **Authentication:** JWT (JSON Web Tokens), Passport, BCrypt
-- **Validation:** Class-validator, Zod (for Environment Variables)
+- **ORM:** TypeORM (Entities, Relations, QueryBuilder, Migrations)
+- **Authentication/Authorization:** JWT, Passport, BCrypt, Custom Guards (RBAC & Ownership)
+- **Validation:** `class-validator`, `class-transformer`, Zod (for Environment Variables)
+- **API Documentation:** Swagger / OpenAPI
+- **File Uploads:** Multer (handling MP3s and Images)
 - **Environment:** Docker Compose
 
 ---
@@ -51,6 +53,7 @@ Create a `.env` file in the root directory. You can use the example below:
 # Application
 PORT=3000
 NODE_ENV=development
+BASE_URL=http://localhost:3000
 
 # Database
 DB_HOST=localhost
@@ -68,6 +71,12 @@ JWT_EXPIRATION=1d
 ### 5. Running the App
 
 ```bash
+# Run database migrations
+npm run migration:run
+
+# Seed the database with dummy data (Artists & Songs)
+npm run seed
+
 # Watch mode (Development)
 npm run start:dev
 
@@ -75,6 +84,8 @@ npm run start:dev
 npm run start:prod
 
 ```
+
+Once running, access the **Swagger API Documentation** at: `http://localhost:3000/api`
 
 ---
 
@@ -88,20 +99,25 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Controllers:** Routing, Request Handling (`@Body`, `@Query`, `@Param`)
 * [x] **Providers:** Services, Dependency Injection (DI)
 * [x] **Modules:** Modular Architecture, imports/exports features
+* [x] **Middleware:** Global HTTP Request Logging
+* [x] **Exception Filters:** Global unified error handling format
 
 ### 🟢 Block 2: Data & Validation
 
-* [x] **Pipes:** `ValidationPipe`, `ParseIntPipe`
+* [x] **Pipes:** `ValidationPipe` (whitelist, forbidNonWhitelisted), `ParseIntPipe`
 * [x] **DTOs:** Input validation using `class-validator`
 * [x] **Serialization:** Response transformation (`@Exclude` password) using `ClassSerializerInterceptor`
 
 ### 🟢 Block 3: Database & ORM
 
 * [x] **TypeORM Setup:** PostgreSQL connection
-* [x] **Entities:** `User`, `Song`, `Artist`, `Playlist` models
-* [x] **Relations:** One-to-Many & Many-to-Many (Playlists <-> Songs)
+* [x] **Entities & Relations:** One-to-Many & Many-to-Many (Playlists <-> Songs <-> Artists)
 * [x] **Migrations:** Database version control (Current status: `synchronize: false`)
 * [x] **Pagination:** Implementing `nestjs-typeorm-paginate`
+* [x] **QueryBuilder:** Complex case-insensitive search and dynamic filtering
+* [x] **Transactions:** Ensuring data consistency (e.g., Playlist creation)
+* [x] **Soft Deletes:** `@DeleteDateColumn` and data restoration
+* [x] **Performance:** Database Indexing (Composite and Single-column indices)
 
 ### 🟢 Block 4: Security & Auth
 
@@ -111,12 +127,14 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Guards:** Protecting routes with `AuthGuard`
 * [x] **Custom Decorators:** `@User()` & `@Roles()` decorators
 * [x] **Authorization (RBAC):** `Admin` vs `User` roles, `RolesGuard`
+* [x] **Ownership Logic:** `PlaylistOwnerGuard` protecting user-specific resources
 
 ### 🟡 Block 5: Advanced Patterns (Current Focus 📍)
 
-* [x] **ConfigModule:** Environment validation with **Zod** (Implemented early for stability)
-* [ ] **Ownership Logic:** Protecting User Resources
-* [ ] **File Upload:** Handling images/audio files with Multer
+* [x] **ConfigModule:** Environment validation with **Zod**
+* [x] **Standalone Applications:** Custom Database Seeder (`npm run seed`)
+* [x] **File Upload:** Handling audio/image files with Multer (`AdminController`)
+* [ ] **Refresh Tokens:** Secure token rotation
 * [ ] **Caching:** Redis integration
 * [ ] **Task Scheduling:** Cron jobs
 
@@ -124,7 +142,7 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 
 * [ ] **Unit Testing:** Jest, mocking services/repositories
 * [ ] **E2E Testing:** Supertest, dockerized test DB
-* [ ] **Documentation:** Swagger/OpenAPI
+* [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
 * [ ] **Docker:** Multi-stage production builds
 
 ---
@@ -134,14 +152,18 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 ```bash
 src/
 ├── app.module.ts        # Root Module
-├── main.ts              # Entry Point
-├── env.validation.ts    # Zod Schema for .env
+├── main.ts              # Entry Point (Swagger, Global Pipes/Filters)
+├── seed.ts              # Standalone App Entry Point (Database Seeding)
+├── env.validation.ts    # Zod Schema for .env validation
 ├── auth/                # Authentication & Security (JWT, Strategies, Guards)
-├── users/               # User Management (Entities, Services)
-├── songs/               # Songs Catalog (CRUD)
+├── users/               # User Management (CRUD, Soft Deletes)
+├── songs/               # Songs Catalog (Search, Pagination, QueryBuilder)
 ├── artists/             # Artists Management
-├── playlists/           # Playlists (Many-to-Many relations)
-└── common/              # Shared Utilities (Decorators, Filters)
+├── playlists/           # Playlists (Many-to-Many, Transactions, Ownership)
+├── admin/               # Admin specific tasks (Role promotion, File Uploads)
+├── seed/                # Database Seeder logic
+├── db/migrations/       # TypeORM Migrations
+└── common/              # Shared Utilities (Decorators, Filters, Middleware)
 
 ```
 
