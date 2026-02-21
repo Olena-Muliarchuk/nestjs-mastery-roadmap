@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, Index } from 'typeorm';
 import { Artist } from '../artists/entities/artist.entity';
 import { Playlist } from 'src/playlists/entities/playlist.entity';
 
+@Index('IDX_SONG_TITLE_DATE', ['title', 'releasedDate'])
 @Entity('songs')
 export class Song {
   @PrimaryGeneratedColumn()
@@ -13,6 +14,7 @@ export class Song {
   @Column({ type: 'text' })
   url: string;
 
+  @Index('IDX_SONG_RELEASED_DATE')
   @Column({ type: 'date' })
   releasedDate: Date;
 

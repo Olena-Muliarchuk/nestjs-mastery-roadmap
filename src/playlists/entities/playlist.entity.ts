@@ -1,6 +1,14 @@
 import { Song } from 'src/songs/song.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('playlist')
 export class Playlist {
@@ -11,6 +19,7 @@ export class Playlist {
   name: string;
 
   @ManyToOne(() => User, (user) => user.playlists)
+  @Index()
   user: User;
 
   @ManyToMany(() => Song)
