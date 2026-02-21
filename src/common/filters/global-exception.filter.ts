@@ -18,7 +18,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: unknown = 'Internal srver error';
+    let message: unknown = 'Internal server error';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -30,7 +30,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           : (exceptionResponse as any).message || exceptionResponse;
     } else {
       this.logger.error(
-        `[Unhandled Excrption] ${request.method} ${request.url}`,
+        `[Unhandled Exception] ${request.method} ${request.url}`,
         exception instanceof Error ? exception.stack : String(exception),
       );
     }
