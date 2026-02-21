@@ -36,9 +36,10 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(includeDeleted: boolean = false): Promise<User[]> {
     return await this.usersRepository.find({
       select: ['id', 'email', 'name'],
+      withDeleted: includeDeleted,
     });
   }
 
@@ -85,10 +86,18 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.usersRepository.delete(id);
+    const result = await this.usersRepository.softDelete(id);
 
     if (result.affected === 0) {
       throw new NotFoundException(`User with ID ${id} not found`);
+    }
+  }
+
+  async restore(id: number): Promise<void> {
+    const result = await this.usersRepository.restore(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found or not deleted`);
     }
   }
 

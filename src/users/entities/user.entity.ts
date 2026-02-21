@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../auth/enums/role.enum';
 import { Playlist } from 'src/playlists/entities/playlist.entity';
@@ -27,4 +27,7 @@ export class User {
 
   @OneToMany(() => Playlist, (playlist) => playlist.user)
   playlists: Playlist[];
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

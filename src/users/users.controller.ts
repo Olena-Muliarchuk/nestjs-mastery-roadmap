@@ -8,6 +8,9 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Query,
+  ParseBoolPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -35,8 +38,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Get all users (Admin only)' })
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(Role.Admin)
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query('includeDeleted', new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
+  ) {
+    return this.usersService.findAll(includeDeleted);
   }
 
   @Get(':id')
@@ -62,5 +67,14 @@ export class UsersController {
   @Roles(Role.Admin)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
+  }
+
+  @Post(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Restore a user (Admin only)' })
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(Role.Admin)
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.restore(id);
   }
 }
