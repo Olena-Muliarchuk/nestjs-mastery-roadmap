@@ -24,10 +24,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      message =
-        typeof exceptionResponse === 'string'
-          ? exceptionResponse
-          : (exceptionResponse as any).message || exceptionResponse;
+      if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const resObj = exceptionResponse as Record<string, unknown>;
+        message = resObj.message ? resObj.message : exceptionResponse;
+      } else {
+        message = exceptionResponse;
+      }
     } else {
       this.logger.error(
         `[Unhandled Exception] ${request.method} ${request.url}`,
