@@ -30,4 +30,8 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ nullable: true })
+  @Exclude()
+  hashedRefreshToken: string | null;
 }

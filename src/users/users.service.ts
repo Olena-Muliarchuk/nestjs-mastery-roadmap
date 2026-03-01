@@ -111,4 +111,10 @@ export class UsersService {
     user.role = role;
     return this.usersRepository.save(user);
   }
+
+  async updateHashedRefreshToken(userId: number, hashedRefreshToken: string | null): Promise<void> {
+    await this.usersRepository.update(userId, {
+      hashedRefreshToken,
+    });
+  }
 }
