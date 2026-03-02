@@ -6,6 +6,7 @@ import {
   HttpStatus,
   UnauthorizedException,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -47,5 +48,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(@User() user: ActiveUser) {
     return this.authService.logout(user.userId);
+  }
+
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Get current user profile' })
+  getProfile(@User() user: ActiveUser) {
+    return user;
   }
 }
