@@ -31,7 +31,7 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   hashedRefreshToken: string | null;
 }

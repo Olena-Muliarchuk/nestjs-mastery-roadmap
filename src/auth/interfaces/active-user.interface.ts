@@ -4,4 +4,5 @@ export interface ActiveUser {
   userId: number;
   email: string;
   role: Role;
+  refreshToken?: string;
 }
