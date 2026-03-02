@@ -14,9 +14,17 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SeedModule } from './seed/seed.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 1 min
+        limit: 25, // max 25 request from this IP
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
@@ -49,7 +57,13 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
     SeedModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
