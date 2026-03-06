@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UseGuards,
   Query,
   ParseBoolPipe,
   DefaultValuePipe,
@@ -16,11 +15,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Role } from '../auth/enums/role.enum';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -34,10 +31,8 @@ export class UsersController {
   }
 
   @Get()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users (Admin only)' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   findAll(
     @Query('includeDeleted', new DefaultValuePipe(false), ParseBoolPipe) includeDeleted: boolean,
   ) {
@@ -45,35 +40,29 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiBearerAuth()
+  @Auth()
   @ApiOperation({ summary: 'Get a user by ID' })
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }
 
   @Put(':id')
-  @ApiBearerAuth()
+  @Auth()
   @ApiOperation({ summary: 'Update a user (own profile or admin)' })
-  @UseGuards(AuthGuard('jwt'))
   update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a user (Admin only)' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 
   @Post(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Restore a user (Admin only)' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   restore(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.restore(id);
   }

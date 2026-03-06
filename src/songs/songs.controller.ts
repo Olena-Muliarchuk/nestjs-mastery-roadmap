@@ -8,7 +8,6 @@ import {
   Param,
   Put,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
@@ -16,14 +15,12 @@ import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
 import { UpdateSongDto } from './dto/update-song.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorators/user.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { Role } from '../auth/enums/role.enum';
 import type { ActiveUser } from '../auth/interfaces/active-user.interface';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FilterSongDto } from './dto/filter-song.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('songs')
 @Controller('songs')
@@ -49,9 +46,8 @@ export class SongsController {
   }
 
   @Post()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new song' })
-  @UseGuards(AuthGuard('jwt'))
+  @Auth()
   create(@Body() createSongDto: CreateSongDto, @User() user: ActiveUser): Promise<Song> {
     console.log(user);
     return this.songsService.create(createSongDto);
@@ -64,19 +60,15 @@ export class SongsController {
   }
 
   @Put(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a song' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateSongDto: UpdateSongDto) {
     return this.songsService.update(id, updateSongDto);
   }
 
   @Delete(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a song (Admin only)' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.songsService.delete(id);
   }

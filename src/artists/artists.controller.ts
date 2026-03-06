@@ -9,7 +9,6 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
-  UseGuards,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -17,11 +16,9 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Artist } from './entities/artist.entity';
 import { ConfigService } from '@nestjs/config';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Role } from 'src/auth/enums/role.enum';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('artists')
 @Controller('artists')
@@ -32,10 +29,8 @@ export class ArtistsController {
   ) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new artist' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistsService.create(createArtistDto);
   }
@@ -64,19 +59,15 @@ export class ArtistsController {
   }
 
   @Put(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an artist' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateArtistDto: UpdateArtistDto) {
     return this.artistsService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete an artist' })
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(Role.Admin)
+  @Auth(Role.Admin)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.artistsService.remove(id);
   }

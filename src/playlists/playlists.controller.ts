@@ -19,11 +19,11 @@ import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { Playlist } from './entities/playlist.entity';
 import { DeleteResult } from 'typeorm';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/decorators/user.decorator';
 import type { ActiveUser } from '../auth/interfaces/active-user.interface';
 import { PlaylistOwnerGuard } from './guards/playlist-owner.guard';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('playlists')
 @Controller('playlists')
@@ -31,9 +31,8 @@ export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new playlist' })
-  @UseGuards(AuthGuard('jwt'))
+  @Auth()
   create(
     @Body() createPlaylistDto: CreatePlaylistDto,
     @User() user: ActiveUser,
@@ -57,7 +56,7 @@ export class PlaylistsController {
   }
 
   @Patch(':id')
-  @ApiBearerAuth()
+  @Auth()
   @ApiOperation({ summary: 'Update a playlist (owner only)' })
   @UseGuards(PlaylistOwnerGuard)
   update(
@@ -68,7 +67,7 @@ export class PlaylistsController {
   }
 
   @Delete(':id')
-  @ApiBearerAuth()
+  @Auth()
   @ApiOperation({ summary: 'Delete a playlist (owner only)' })
   @UseGuards(PlaylistOwnerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)

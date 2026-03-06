@@ -3,7 +3,6 @@ import {
   Patch,
   Param,
   ParseIntPipe,
-  UseGuards,
   Post,
   UseInterceptors,
   UploadedFile,
@@ -11,19 +10,15 @@ import {
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Role } from 'src/auth/enums/role.enum';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('admin')
-@ApiBearerAuth()
 @Controller('admin')
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(Role.Admin)
+@Auth(Role.Admin)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
