@@ -134,8 +134,8 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **ConfigModule:** Environment validation with **Zod**
 * [x] **Standalone Applications:** Custom Database Seeder (`npm run seed`)
 * [x] **File Upload:** Handling audio/image files with Multer (`AdminController`)
-* [ ] **Refresh Tokens:** Secure token rotation
-* [ ] **Caching:** Redis integration
+* [x] **Refresh Tokens:** Secure token rotation
+* [x] **Caching:** Redis integration
 * [ ] **Task Scheduling:** Cron jobs
 
 ### ⚪️ Block 6: Testing & DevOps
