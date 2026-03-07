@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/enums/role.enum';
 
@@ -116,5 +116,16 @@ export class UsersService {
     await this.usersRepository.update(userId, {
       hashedRefreshToken,
     });
+  }
+
+  async deleteExpiredUsers(): Promise<number> {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const result = await this.usersRepository.delete({
+      deletedAt: LessThan(thirtyDaysAgo),
+    });
+
+    return result.affected ?? 0;
   }
 }

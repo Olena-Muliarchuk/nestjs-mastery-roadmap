@@ -19,6 +19,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { redisAsyncConfig } from './config/redis.config';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
 
     CacheModule.registerAsync(redisAsyncConfig),
+
+    ScheduleModule.forRoot(),
 
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
