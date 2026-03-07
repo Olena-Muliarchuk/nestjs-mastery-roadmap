@@ -12,8 +12,6 @@ I'm building a **RESTful API for a Music Streaming Platform**, where users can b
 
 ## 🛠 Tech Stack
 
-## 🛠 Tech Stack
-
 - **Framework:** [NestJS](https://nestjs.com/) (Modular Architecture)
 - **Language:** TypeScript (Strict Mode)
 - **Database:** PostgreSQL (via Docker)
