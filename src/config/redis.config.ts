@@ -1,22 +1,37 @@
 import { CacheModuleAsyncOptions } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-yet';
+import { Logger } from '@nestjs/common';
+import KeyvRedis from '@keyv/redis';
 
 export const redisAsyncConfig: CacheModuleAsyncOptions = {
   isGlobal: true,
   imports: [ConfigModule],
   inject: [ConfigService],
-  useFactory: async (configService: ConfigService) => {
-    const store = await redisStore({
-      socket: {
-        host: configService.get<string>('REDIS_HOST', 'localhost'),
-        port: parseInt(configService.get<string>('REDIS_PORT', '6379')),
-      },
-      ttl: 60 * 1000, // 1 min
+  useFactory: (configService: ConfigService) => {
+    const logger = new Logger('RedisConfig');
+
+    const host = configService.get<string>('REDIS_HOST');
+    const port = configService.get<string>('REDIS_PORT');
+    const redisUrl = `redis://${host}:${port}`;
+
+    const store = new KeyvRedis(redisUrl);
+
+    store.on('error', (err: unknown) => {
+      let message = 'Unknown Redis error';
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === 'string') {
+        message = err;
+      }
+
+      logger.error(`Redis connection error: ${message}`);
     });
 
+    logger.log(`Initialized Redis storage at ${host}:${port}`);
+
     return {
-      store: store as any,
+      stores: [store],
+      ttl: 60 * 1000,
     };
   },
 };

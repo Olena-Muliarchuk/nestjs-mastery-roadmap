@@ -8,6 +8,7 @@ import {
   Param,
   Put,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
@@ -21,7 +22,8 @@ import type { ActiveUser } from '../auth/interfaces/active-user.interface';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FilterSongDto } from './dto/filter-song.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-
+import { CacheTTL } from '@nestjs/cache-manager';
+import { HttpCacheInterceptor } from 'src/common/interceptors/http-cache.interceptor';
 @ApiTags('songs')
 @Controller('songs')
 export class SongsController {
@@ -32,6 +34,8 @@ export class SongsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all songs with pagination' })
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheTTL(60 * 1000)
   findAll(@Query() filterDto: FilterSongDto): Promise<Pagination<Song>> {
     const baseUrl = this.configService.get<string>('BASE_URL');
 
