@@ -12,12 +12,16 @@ I'm building a **RESTful API for a Music Streaming Platform**, where users can b
 
 ## 🛠 Tech Stack
 
+## 🛠 Tech Stack
+
 - **Framework:** [NestJS](https://nestjs.com/) (Modular Architecture)
 - **Language:** TypeScript (Strict Mode)
 - **Database:** PostgreSQL (via Docker)
 - **ORM:** TypeORM (Entities, Relations, QueryBuilder, Migrations)
 - **Authentication/Authorization:** JWT, Passport, BCrypt, Custom Guards (RBAC & Ownership)
 - **Validation:** `class-validator`, `class-transformer`, Zod (for Environment Variables)
+- **Caching:** Redis (via Keyv & CacheManager)
+- **Scheduling:** @nestjs/schedule (Cron Jobs)
 - **API Documentation:** Swagger / OpenAPI
 - **File Uploads:** Multer (handling MP3s and Images)
 - **Environment:** Docker Compose
@@ -64,7 +68,13 @@ DB_NAME=nest_db
 
 # Security (JWT)
 JWT_SECRET=SuperSecretKey123!
-JWT_EXPIRATION=1d
+JWT_EXPIRATION=15m
+JWT_REFRESH_SECRET=SuperSecretRefreshKey!
+JWT_REFRESH_EXPIRATION=7d
+
+# Caching (Redis)
+REDIS_HOST=localhost
+REDIS_PORT=6379
 
 ```
 
@@ -136,7 +146,8 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **File Upload:** Handling audio/image files with Multer (`AdminController`)
 * [x] **Refresh Tokens:** Secure token rotation
 * [x] **Caching:** Redis integration
-* [ ] **Task Scheduling:** Cron jobs
+* [x] **Task Scheduling:** Cron jobs (`@nestjs/schedule`)
+* [] **Cloud Storage:** AWS S3 / MinIO integration
 
 ### ⚪️ Block 6: Testing & DevOps
 
