@@ -20,6 +20,12 @@ export const envSchema = z.object({
 
   REDIS_HOST: z.string().default('localhost'),
   REDIS_PORT: z.coerce.number().default(6379),
+
+  AWS_S3_REGION: z.string().default('us-east-1'),
+  AWS_S3_ENDPOINT: z.string().url(),
+  AWS_ACCESS_KEY_ID: z.string().min(1),
+  AWS_SECRET_ACCESS_KEY: z.string().min(1),
+  AWS_S3_BUCKET_NAME: z.string().min(1),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
