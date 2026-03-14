@@ -1,5 +1,6 @@
 import {
   CreateBucketCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommand,
   PutObjectCommand,
@@ -86,5 +87,15 @@ export class StorageService implements OnModuleInit {
     return getSignedUrl(this.s3Client, command, {
       expiresIn: PRESIGNED_URL_EXPIRES_IN,
     });
+  }
+
+  async deleteFile(key: string): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+
+    await this.s3Client.send(command);
+    this.logger.log(`File deleted from storage: ${key}`);
   }
 }

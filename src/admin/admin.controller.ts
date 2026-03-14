@@ -12,15 +12,18 @@ import { AdminService } from './admin.service';
 import { Role } from 'src/auth/enums/role.enum';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
 import { Auth } from 'src/auth/decorators/auth.decorator';
+import { StorageService } from 'src/storage/storage.service';
 
 @ApiTags('admin')
 @Controller('admin')
 @Auth(Role.Admin)
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly storageService: StorageService,
+  ) {}
 
   @Patch('promote/:id')
   @ApiOperation({ summary: 'Promote user to admin' })
@@ -50,19 +53,8 @@ export class AdminController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
+      storage: memoryStorage(),
       fileFilter: (req, file, cb) => {
-        console.log('Mimetype is:', file.mimetype);
-
         const allowedTypes = [
           'audio/mpeg', // mp3
           'audio/wav',
@@ -81,13 +73,23 @@ export class AdminController {
       },
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('File is not uploaded');
     }
 
+    const folder = file.mimetype.startsWith('image/') ? 'images' : 'songs';
+
+    const savedFileKey = await this.storageService.uploadFile(
+      file.originalname,
+      file.buffer,
+      file.mimetype,
+      folder,
+    );
+
     return {
-      url: `/uploads/${file.filename}`,
+      message: 'File uploaded successfully to cloud storage',
+      fileKey: savedFileKey,
     };
   }
 }

@@ -14,6 +14,9 @@ export class Song {
   @Column({ type: 'text' })
   url: string;
 
+  @Column({ type: 'text', nullable: true })
+  storageKey: string;
+
   @Index('IDX_SONG_RELEASED_DATE')
   @Column({ type: 'date' })
   releasedDate: Date;
