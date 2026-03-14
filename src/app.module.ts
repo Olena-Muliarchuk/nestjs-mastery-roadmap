@@ -20,6 +20,7 @@ import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { redisAsyncConfig } from './config/redis.config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     PlaylistsModule,
     AdminModule,
     SeedModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [
