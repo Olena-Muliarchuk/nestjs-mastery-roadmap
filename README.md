@@ -145,7 +145,9 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Refresh Tokens:** Secure token rotation
 * [x] **Caching:** Redis integration
 * [x] **Task Scheduling:** Cron jobs (`@nestjs/schedule`)
-* [] **Cloud Storage:** AWS S3 / MinIO integration
+* [x] **Cloud Storage:** AWS S3 / MinIO integration (Presigned URLs, Garbage Collection)
+* [ ] **Asynchronous Processing (Queues):** BullMQ & Redis integration
+* [ ] **WebSockets:** Real-time communication (Gateway, Socket.IO)
 
 ### ⚪️ Block 6: Testing & DevOps
 
@@ -153,6 +155,11 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [ ] **E2E Testing:** Supertest, dockerized test DB
 * [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
 * [ ] **Docker:** Multi-stage production builds
+
+### ⚪️ Block 7: Enterprise Architecture (Advanced)
+
+* [ ] **Search Engine:** Elasticsearch integration (Replacing `ILIKE` queries)
+* [ ] **CQRS & Event-Driven Architecture:** EventBus, separating read/write loads
 
 ---
 
