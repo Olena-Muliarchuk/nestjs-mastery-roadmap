@@ -9,6 +9,7 @@ import { Artist } from 'src/artists/entities/artist.entity';
 import { FilterSongDto } from './dto/filter-song.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class SongsService {
@@ -16,11 +17,12 @@ export class SongsService {
 
   constructor(
     @InjectRepository(Song)
-    private songRepository: Repository<Song>,
+    private readonly songRepository: Repository<Song>,
     @InjectRepository(Artist)
-    private artistRepository: Repository<Artist>,
+    private readonly artistRepository: Repository<Artist>,
     @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
+    private readonly cacheManager: Cache,
+    private readonly storageService: StorageService,
   ) {}
 
   async create(songDto: CreateSongDto): Promise<Song> {
@@ -30,7 +32,8 @@ export class SongsService {
 
     const song = this.songRepository.create({
       ...songDto,
-      artists: artists,
+      artists,
+      storageKey: songDto.storageKey ?? undefined,
     });
 
     const saved = await this.songRepository.save(song);
@@ -43,7 +46,7 @@ export class SongsService {
   async paginate(options: IPaginationOptions, filterDto: FilterSongDto): Promise<Pagination<Song>> {
     const queryBuilder = this.songRepository.createQueryBuilder('song');
 
-    // 'song.artists' - name field in  song.entity.ts, 'artist' - alias for table
+    // 'song.artists' — field name in song.entity.ts, 'artist' — table alias
     queryBuilder.leftJoinAndSelect('song.artists', 'artist');
 
     if (filterDto.title) {
@@ -62,7 +65,13 @@ export class SongsService {
       queryBuilder.orderBy('song.releasedDate', filterDto.sortOrder);
     }
 
-    return paginate<Song>(queryBuilder, options);
+    const paginatedResult = await paginate<Song>(queryBuilder, options);
+
+    const resolvedItems = await Promise.all(
+      paginatedResult.items.map((song) => this.resolvePresignedUrl(song)),
+    );
+
+    return { ...paginatedResult, items: resolvedItems };
   }
 
   async findOne(id: number): Promise<Song> {
@@ -75,11 +84,15 @@ export class SongsService {
       throw new HttpException('Song not found', HttpStatus.NOT_FOUND);
     }
 
-    return song;
+    return this.resolvePresignedUrl(song);
   }
 
   async update(id: number, recordToUpdate: UpdateSongDto): Promise<UpdateResult> {
-    const { artists: _artists, releasedDate, ...rest } = recordToUpdate;
+    if (Object.keys(recordToUpdate).length === 0) {
+      throw new HttpException('Provide at least one field to update', HttpStatus.BAD_REQUEST);
+    }
+
+    const { artists, releasedDate, ...rest } = recordToUpdate;
 
     const updateData: Partial<Song> = { ...rest };
 
@@ -93,12 +106,35 @@ export class SongsService {
       throw new HttpException('Song not found', HttpStatus.NOT_FOUND);
     }
 
+    if (artists && artists.length > 0) {
+      const song = await this.songRepository.findOne({
+        where: { id },
+        relations: ['artists'],
+      });
+
+      if (song) {
+        const newArtists = await this.artistRepository.findBy({ id: In(artists) });
+        song.artists = newArtists;
+        await this.songRepository.save(song);
+      }
+    }
+
     await this.invalidateSongsCache();
 
     return result;
   }
 
   async delete(id: number): Promise<DeleteResult> {
+    const song = await this.songRepository.findOne({ where: { id } });
+
+    if (!song) {
+      throw new HttpException('Song not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (song.storageKey) {
+      await this.storageService.deleteFile(song.storageKey);
+    }
+
     const result = await this.songRepository.delete(id);
 
     if (result.affected === 0) {
@@ -108,6 +144,16 @@ export class SongsService {
     await this.invalidateSongsCache();
 
     return result;
+  }
+
+  private async resolvePresignedUrl(song: Song): Promise<Song> {
+    if (!song.storageKey) {
+      return song;
+    }
+
+    const presignedUrl = await this.storageService.getPresignedUrl(song.storageKey);
+
+    return { ...song, url: presignedUrl };
   }
 
   private async invalidateSongsCache(): Promise<void> {
@@ -124,7 +170,7 @@ export class SongsService {
         await this.cacheManager.clear();
         this.logger.log('Cache cleared (full)');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`Cache invalidation failed: ${message}`);
     }

@@ -31,4 +31,8 @@ export class CreateSongDto {
   @IsString()
   @IsNotEmpty()
   readonly url: string;
+
+  @IsString()
+  @IsOptional()
+  readonly storageKey?: string;
 }
