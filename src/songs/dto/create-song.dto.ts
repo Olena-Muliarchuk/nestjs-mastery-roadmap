@@ -21,7 +21,7 @@ export class CreateSongDto {
   readonly releasedDate: string;
 
   @IsMilitaryTime()
-  @IsNotEmpty()
+  @IsOptional()
   readonly duration: string;
 
   @IsString()
@@ -29,7 +29,7 @@ export class CreateSongDto {
   readonly lyrics: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly url: string;
 
   @IsString()
