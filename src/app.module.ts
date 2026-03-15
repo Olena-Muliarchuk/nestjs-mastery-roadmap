@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SongsModule } from './songs/songs.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateEnv } from './env.validation';
 import { ArtistsModule } from './artists/artists.module';
 import { UsersModule } from './users/users.module';
@@ -21,6 +21,8 @@ import { redisAsyncConfig } from './config/redis.config';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { StorageModule } from './storage/storage.module';
+import { BullModule } from '@nestjs/bullmq';
+import { AudioModule } from './audio/audio.module';
 
 @Module({
   imports: [
@@ -41,6 +43,17 @@ import { StorageModule } from './storage/storage.module';
 
     ScheduleModule.forRoot(),
 
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
+    }),
+
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
@@ -53,6 +66,7 @@ import { StorageModule } from './storage/storage.module';
     AdminModule,
     SeedModule,
     StorageModule,
+    AudioModule,
   ],
   controllers: [AppController],
   providers: [
