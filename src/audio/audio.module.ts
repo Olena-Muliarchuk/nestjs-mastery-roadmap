@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AudioService } from './audio.service';
 import { BullModule } from '@nestjs/bullmq';
+import { AudioProcessor } from './audio.processor';
 
 @Module({
   imports: [
@@ -8,6 +9,7 @@ import { BullModule } from '@nestjs/bullmq';
       name: 'audio-queue',
     }),
   ],
-  providers: [AudioService],
+  providers: [AudioService, AudioProcessor],
+  exports: [AudioService],
 })
 export class AudioModule {}
