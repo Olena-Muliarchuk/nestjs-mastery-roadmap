@@ -12,7 +12,7 @@ export const redisAsyncConfig: CacheModuleAsyncOptions = {
 
     const host = configService.get<string>('REDIS_HOST');
     const port = configService.get<string>('REDIS_PORT');
-    const redisUrl = `redis://${host}:${port}`;
+    const redisUrl = `redis://${host}:${port}/1`;
 
     const store = new KeyvRedis(redisUrl);
 
