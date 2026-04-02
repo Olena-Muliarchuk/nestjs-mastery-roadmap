@@ -10,7 +10,9 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { sdkStreamMixin } from '@smithy/util-stream';
 import { randomUUID } from 'crypto';
+import { Readable } from 'stream';
 
 const PRESIGNED_URL_EXPIRES_IN = 60 * 15; // 15 minutes
 
@@ -97,5 +99,26 @@ export class StorageService implements OnModuleInit {
 
     await this.s3Client.send(command);
     this.logger.log(`File deleted from storage: ${key}`);
+  }
+
+  async getFileStream(key: string): Promise<Readable> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+
+    const response = await this.s3Client.send(command);
+
+    if (!response.Body) {
+      throw new Error(`File not found: ${key}`);
+    }
+
+    const stream = sdkStreamMixin(response.Body);
+
+    if (!(stream instanceof Readable)) {
+      throw new Error('Expected a Node.js Readable stream');
+    }
+
+    return stream;
   }
 }

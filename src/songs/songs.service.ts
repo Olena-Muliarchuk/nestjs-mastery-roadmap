@@ -10,6 +10,7 @@ import { FilterSongDto } from './dto/filter-song.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import { StorageService } from 'src/storage/storage.service';
+import { AudioService } from 'src/audio/audio.service';
 
 @Injectable()
 export class SongsService {
@@ -23,6 +24,7 @@ export class SongsService {
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
     private readonly storageService: StorageService,
+    private readonly audioService: AudioService,
   ) {}
 
   async create(songDto: CreateSongDto): Promise<Song> {
@@ -37,6 +39,13 @@ export class SongsService {
     });
 
     const saved = await this.songRepository.save(song);
+
+    if (saved.storageKey) {
+      await this.audioService.addMetadataJob({
+        songId: saved.id,
+        storageKey: saved.storageKey,
+      });
+    }
 
     await this.invalidateSongsCache();
 
