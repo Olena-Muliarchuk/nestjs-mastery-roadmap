@@ -17,6 +17,7 @@ services:
     ports:
       - '${REDIS_PORT}:6379'
     restart: always
+    command: redis-server --appendonly yes --appendfsync everysec
     volumes:
       - redis_data:/data
 
