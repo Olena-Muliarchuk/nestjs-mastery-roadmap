@@ -23,6 +23,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { StorageModule } from './storage/storage.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AudioModule } from './audio/audio.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { AudioModule } from './audio/audio.module';
     SeedModule,
     StorageModule,
     AudioModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [
