@@ -54,7 +54,7 @@ export class SongsController {
   @Auth()
   create(@Body() createSongDto: CreateSongDto, @User() user: ActiveUser): Promise<Song> {
     console.log(user);
-    return this.songsService.create(createSongDto);
+    return this.songsService.create(createSongDto, user.userId);
   }
 
   @Get(':id')

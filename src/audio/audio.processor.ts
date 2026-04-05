@@ -8,6 +8,7 @@ import { Song, SongStatus } from 'src/songs/song.entity';
 import { StorageService } from 'src/storage/storage.service';
 import * as mm from 'music-metadata';
 import { Readable } from 'stream';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Processor('audio-queue')
 export class AudioProcessor extends WorkerHost {
@@ -17,6 +18,7 @@ export class AudioProcessor extends WorkerHost {
     @InjectRepository(Song)
     private readonly songRepository: Repository<Song>,
     private readonly storageService: StorageService,
+    private readonly eventsGateway: EventsGateway,
   ) {
     super();
   }
@@ -58,12 +60,25 @@ export class AudioProcessor extends WorkerHost {
       });
 
       this.logger.log(`Metadata extracted for song ${data.songId}! Duration: ${formattedDuration}`);
+
+      this.eventsGateway.emitToUser(data.userId.toString(), 'songReady', {
+        songId: data.songId,
+        duration: formattedDuration,
+        status: SongStatus.ACTIVE,
+        message: 'Your song is ready to play!',
+      });
     } catch (error) {
       this.logger.error(`Failed to process song ${data.songId}`, error);
 
       await this.songRepository.update(data.songId, {
         status: SongStatus.FAILED,
       });
+
+      this.eventsGateway.emitToUser(data.userId.toString(), 'songFailed', {
+        songId: data.songId,
+        message: 'Failed to process audio file.',
+      });
+
       throw error;
     } finally {
       if (stream && !stream.destroyed) {

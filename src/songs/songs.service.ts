@@ -27,7 +27,7 @@ export class SongsService {
     private readonly audioService: AudioService,
   ) {}
 
-  async create(songDto: CreateSongDto): Promise<Song> {
+  async create(songDto: CreateSongDto, userId: number): Promise<Song> {
     const artists = await this.artistRepository.findBy({
       id: In(songDto.artists),
     });
@@ -44,6 +44,7 @@ export class SongsService {
       await this.audioService.addMetadataJob({
         songId: saved.id,
         storageKey: saved.storageKey,
+        userId: userId,
       });
     }
 

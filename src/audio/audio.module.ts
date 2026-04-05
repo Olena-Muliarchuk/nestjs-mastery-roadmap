@@ -5,6 +5,7 @@ import { AudioProcessor } from './audio.processor';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Song } from 'src/songs/song.entity';
 import { StorageModule } from 'src/storage/storage.module';
+import { EventsModule } from 'src/events/events.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { StorageModule } from 'src/storage/storage.module';
     }),
     TypeOrmModule.forFeature([Song]),
     StorageModule,
+    EventsModule,
   ],
   providers: [AudioService, AudioProcessor],
   exports: [AudioService],
