@@ -22,6 +22,9 @@ I'm building a **RESTful API for a Music Streaming Platform**, where users can b
 - **Scheduling:** @nestjs/schedule (Cron Jobs)
 - **API Documentation:** Swagger / OpenAPI
 - **File Uploads:** Multer (handling MP3s and Images)
+- **Cloud Storage:** AWS SDK v3 (S3 API) / MinIO
+- **Background Processing:** BullMQ (Redis-backed queues), `music-metadata`
+- **Real-time Communication:** WebSockets (@nestjs/websockets, Socket.IO)
 - **Environment:** Docker Compose
 
 ---
@@ -73,6 +76,13 @@ JWT_REFRESH_EXPIRATION=7d
 # Caching (Redis)
 REDIS_HOST=localhost
 REDIS_PORT=6379
+
+# Cloud Storage (S3 / MinIO)
+AWS_S3_REGION=us-east-1
+AWS_S3_ENDPOINT=http://localhost:9000
+AWS_ACCESS_KEY_ID=minioadmin
+AWS_SECRET_ACCESS_KEY=minioadmin
+AWS_S3_BUCKET_NAME=nest-music-uploads
 
 ```
 
@@ -137,7 +147,7 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Authorization (RBAC):** `Admin` vs `User` roles, `RolesGuard`
 * [x] **Ownership Logic:** `PlaylistOwnerGuard` protecting user-specific resources
 
-### 🟡 Block 5: Advanced Patterns (Current Focus 📍)
+### 🟢 Block 5: Advanced Patterns
 
 * [x] **ConfigModule:** Environment validation with **Zod**
 * [x] **Standalone Applications:** Custom Database Seeder (`npm run seed`)
@@ -146,10 +156,10 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Caching:** Redis integration
 * [x] **Task Scheduling:** Cron jobs (`@nestjs/schedule`)
 * [x] **Cloud Storage:** AWS S3 / MinIO integration (Presigned URLs, Garbage Collection)
-* [ ] **Asynchronous Processing (Queues):** BullMQ & Redis integration
-* [ ] **WebSockets:** Real-time communication (Gateway, Socket.IO)
+* [x] **Asynchronous Processing (Queues):** BullMQ & Redis integration
+* [x] **WebSockets:** Real-time communication (Gateway, Socket.IO)
 
-### ⚪️ Block 6: Testing & DevOps
+### 🟡 Block 6: Testing & DevOps (Current Focus 📍)
 
 * [ ] **Unit Testing:** Jest, mocking services/repositories
 * [ ] **E2E Testing:** Supertest, dockerized test DB
@@ -168,19 +178,19 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 ```bash
 src/
 ├── app.module.ts        # Root Module
-├── main.ts              # Entry Point (Swagger, Global Pipes/Filters)
-├── seed.ts              # Standalone App Entry Point (Database Seeding)
+├── main.ts              # Entry Point
 ├── env.validation.ts    # Zod Schema for .env validation
-├── auth/                # Authentication & Security (JWT, Strategies, Guards)
-├── users/               # User Management (CRUD, Soft Deletes)
-├── songs/               # Songs Catalog (Search, Pagination, QueryBuilder)
-├── artists/             # Artists Management
-├── playlists/           # Playlists (Many-to-Many, Transactions, Ownership)
-├── admin/               # Admin specific tasks (Role promotion, File Uploads)
-├── seed/                # Database Seeder logic
+├── config/              # Centralized configs (TypeORM, Redis)
+├── auth/                # Security (JWT, Strategies, Guards)
+├── users/               # User Management
+├── songs/               # Catalog (Search, Pagination, Presigned URLs)
+├── playlists/           # Playlists (Transactions, Ownership)
+├── audio/               # BullMQ Producer & Worker (Metadata extraction)
+├── storage/             # AWS S3 / MinIO integration
+├── events/              # WebSocket Gateway (Real-time events)
+├── admin/               # Admin specific tasks (File Uploads)
 ├── db/migrations/       # TypeORM Migrations
-└── common/              # Shared Utilities (Decorators, Filters, Middleware)
-
+└── common/              # Shared Utilities (Filters, Interceptors)
 ```
 
 ---
