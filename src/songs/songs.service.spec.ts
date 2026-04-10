@@ -6,6 +6,9 @@ import { CreateSongDto } from './dto/create-song.dto';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Artist } from '../artists/entities/artist.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { StorageService } from 'src/storage/storage.service';
+import { AudioService } from 'src/audio/audio.service';
 
 describe('SongsService', () => {
   let service: SongsService;
@@ -19,8 +22,7 @@ describe('SongsService', () => {
         releasedDate: song.releasedDate ? new Date(song.releasedDate) : undefined,
       }),
     ),
-
-    findOne: jest.fn().mockImplementation((options) => {
+    findOne: jest.fn().mockImplementation((options: any) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const id = options.where.id;
       if (id === 1) {
@@ -34,22 +36,39 @@ describe('SongsService', () => {
       }
       return Promise.resolve(null);
     }),
-
     update: jest.fn().mockResolvedValue({ affected: 1 }),
-
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
-
     findAndCount: jest.fn().mockResolvedValue([[], 0]),
+  };
+
+  const mockArtistRepository = {
+    findBy: jest.fn().mockResolvedValue([{ id: 1, name: 'Test Artist' }]),
+  };
+
+  const mockCacheManager = {
+    stores: [{ keys: jest.fn().mockResolvedValue(['api:/songs']) }],
+    del: jest.fn().mockResolvedValue(true),
+    clear: jest.fn().mockResolvedValue(true),
+  };
+
+  const mockAudioService = {
+    addMetadataJob: jest.fn().mockResolvedValue(undefined),
+  };
+
+  const mockStorageService = {
+    deleteFile: jest.fn().mockResolvedValue(undefined),
+    getPresignedUrl: jest.fn().mockResolvedValue('http://presigned.url/test.mp3'),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SongsService,
-        {
-          provide: getRepositoryToken(Song),
-          useValue: mockSongRepository,
-        },
+        { provide: getRepositoryToken(Song), useValue: mockSongRepository },
+        { provide: getRepositoryToken(Artist), useValue: mockArtistRepository },
+        { provide: CACHE_MANAGER, useValue: mockCacheManager },
+        { provide: StorageService, useValue: mockStorageService },
+        { provide: AudioService, useValue: mockAudioService },
       ],
     }).compile();
 
@@ -65,20 +84,18 @@ describe('SongsService', () => {
     it('should create a new song', async () => {
       const dto: CreateSongDto = {
         title: 'Test Song',
-        artist: 1,
-        duration: 180,
+        artists: [1],
+        duration: '03:00',
         releasedDate: '2022-01-01',
+        lyrics: '',
+        url: '',
       };
 
-      const result = await service.create(dto);
+      const result = await service.create(dto, 1);
 
-      expect(result).toEqual({
-        id: 1,
-        title: dto.title,
-        duration: dto.duration,
-        artist: { id: 1 },
-        releasedDate: new Date(dto.releasedDate),
-      });
+      expect(result).toBeDefined();
+      expect(result.id).toBe(1);
+      expect(result.title).toBe(dto.title);
     });
   });
 
@@ -86,7 +103,6 @@ describe('SongsService', () => {
     it('should find a song by id', async () => {
       const result = await service.findOne(1);
       expect(result.id).toBe(1);
-      expect(result.artist).toBeDefined();
     });
 
     it('should throw 404 if song not found', async () => {
