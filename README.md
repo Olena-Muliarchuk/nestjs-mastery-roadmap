@@ -167,10 +167,24 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Docker:** Multi-stage production builds, internal networking, healthchecks
 * [x] **Database Migrations in Prod:** Compiling migrations for Docker execution
 
-### ⚪️ Block 7: Enterprise Architecture (Advanced)
+### 🟡 Block 7: Microservices Evolution & NestJS Advanced (Current Focus 📍)
 
-* [ ] **Search Engine:** Elasticsearch integration (Replacing `ILIKE` queries)
-* [ ] **CQRS & Event-Driven Architecture:** EventBus, separating read/write loads
+* [ ] **Monorepo Infrastructure:** Migrating to a Workspace (`apps/` and `libs/`), centralized `.env` management.
+* [ ] **API Gateway (BFF):** Creating a single entry point.
+* [ ] **Advanced Shared Modules (`libs/`):** Building Dynamic Modules (`forRootAsync`) and Custom Providers (`useFactory`) for shared infrastructure.
+* [ ] **Inter-service Security:** Implementing Trust/Auth bridging between the Gateway and internal microservices.
+* [ ] **Auth Microservice (TCP/Redis):** Extracting Authentication using standard message passing.
+* [ ] **Worker Isolation & Resilience:** Extracting `AudioProcessor` via BullMQ, implementing **Dead Letter Queues (DLQ)** for failed jobs.
+* [ ] **Event-Driven Architecture (Kafka):** Implementing async Pub/Sub events with basic **Idempotency** strategies.
+* [ ] **High-Performance RPC (gRPC):** Creating a `MetadataService` using ultra-fast binary communication.
+
+### ⚪️ Block 8: Enterprise Patterns, Resilience & Observability (Future)
+
+* [ ] **Health Checks & Graceful Shutdown:** Upgrading to `@nestjs/terminus` for true service readiness probes.
+* [ ] **Distributed Tracing & Centralized Logging:** Implementing Correlation IDs (via Interceptors) to track requests across the microservices mesh.
+* [ ] **Circuit Breaker Pattern:** Preventing cascading failures when a downstream microservice is dead.
+* [ ] **Distributed Transactions:** Handling cross-service data consistency (Saga Pattern).
+* [ ] **CQRS:** Command Query Responsibility Segregation for separating read/write databases.
 
 ---
 
