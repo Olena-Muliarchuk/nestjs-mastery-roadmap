@@ -1,7 +1,10 @@
+// src/config/typeorm-cli.config.ts
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 
 config();
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export default new DataSource({
   type: 'postgres',
@@ -10,6 +13,8 @@ export default new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/db/migrations/*.ts'],
+
+  entities: isProd ? ['dist/**/*.entity.js'] : ['src/**/*.entity.ts'],
+
+  migrations: isProd ? ['dist/db/migrations/*.js'] : ['src/db/migrations/*.ts'],
 });
