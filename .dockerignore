@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+dist
+test
+coverage
+*.md
+.env
+docker-compose.yml
+typeorm-cli.config.ts
