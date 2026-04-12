@@ -159,12 +159,13 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Asynchronous Processing (Queues):** BullMQ & Redis integration
 * [x] **WebSockets:** Real-time communication (Gateway, Socket.IO)
 
-### 🟡 Block 6: Testing & DevOps (Current Focus 📍)
+### 🟢 Block 6: Testing & DevOps
 
-* [ ] **Unit Testing:** Jest, mocking services/repositories
-* [ ] **E2E Testing:** Supertest, dockerized test DB
+* [x] **Unit Testing:** Jest, mocking services/repositories, stream memory management
+* [x] **E2E Testing:** Supertest, dockerized test DB, overriding providers
 * [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
-* [ ] **Docker:** Multi-stage production builds
+* [x] **Docker:** Multi-stage production builds, internal networking, healthchecks
+* [x] **Database Migrations in Prod:** Compiling migrations for Docker execution
 
 ### ⚪️ Block 7: Enterprise Architecture (Advanced)
 
