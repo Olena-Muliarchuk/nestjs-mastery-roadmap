@@ -25,6 +25,13 @@
       "jest",
       "node"
     ],
-    "paths": {}
+    "paths": {
+      "@app/contracts": [
+        "libs/contracts/src"
+      ],
+      "@app/contracts/*": [
+        "libs/contracts/src/*"
+      ]
+    }
   }
 }
