@@ -6,7 +6,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('SongsController', () => {
   let controller: SongsController;
-  let service: SongsService;
+  let _service: SongsService;
 
   const mockSongsService = {
     create: jest.fn((dto) => Promise.resolve({ id: 1, ...dto })),
@@ -37,7 +37,7 @@ describe('SongsController', () => {
     }).compile();
 
     controller = module.get<SongsController>(SongsController);
-    service = module.get<SongsService>(SongsService);
+    _service = module.get<SongsService>(SongsService);
   });
 
   it('should be defined', () => {

@@ -9,7 +9,7 @@ export default defineConfig([
   {
     ignores: [
       'eslint.config.mjs',
-      'src/db/migrations/*.ts',
+      'apps/nest-zero-to-hero/src/db/migrations/*.ts',
       'dist/',
       'node_modules/',
       'coverage/',
@@ -27,7 +27,7 @@ export default defineConfig([
         ...globals.node,
         ...globals.jest,
       },
-      sourceType: 'commonjs',
+      sourceType: 'module',
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
