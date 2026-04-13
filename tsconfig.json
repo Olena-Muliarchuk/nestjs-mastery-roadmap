@@ -21,6 +21,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false,
     "types": ["jest", "node"],
+    "paths": {
+      "@app/contracts": ["libs/contracts/src"],
+      "@app/contracts/*": ["libs/contracts/src/*"],
+      "@app/nest-zero-to-hero": ["apps/nest-zero-to-hero/src"],
+      "@app/nest-zero-to-hero/*": ["apps/nest-zero-to-hero/src/*"]
+    }
   }
 }
