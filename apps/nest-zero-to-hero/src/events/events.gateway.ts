@@ -10,7 +10,7 @@ import { Server } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthenticatedSocket } from './types/socket.types';
-import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { JwtPayload } from '@app/contracts';
 
 @WebSocketGateway({
   cors: { origin: '*' },

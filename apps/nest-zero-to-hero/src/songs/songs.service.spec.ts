@@ -7,8 +7,8 @@ import { UpdateSongDto } from './dto/update-song.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Artist } from '../artists/entities/artist.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { StorageService } from 'src/storage/storage.service';
-import { AudioService } from 'src/audio/audio.service';
+import { StorageService } from '@app/nest-zero-to-hero/storage/storage.service';
+import { AudioService } from '@app/nest-zero-to-hero/audio/audio.service';
 
 describe('SongsService', () => {
   let service: SongsService;

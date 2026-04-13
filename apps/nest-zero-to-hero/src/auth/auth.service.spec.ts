@@ -4,7 +4,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { Role } from './enums/role.enum';
+import { Role } from '@app/contracts';
 import { UnauthorizedException } from '@nestjs/common';
 
 const mockUsersService = {

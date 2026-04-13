@@ -5,12 +5,12 @@ import { DeleteResult, Repository, UpdateResult, In } from 'typeorm';
 import { Song } from './song.entity';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { UpdateSongDto } from './dto/update-song.dto';
-import { Artist } from 'src/artists/entities/artist.entity';
+import { Artist } from '@app/nest-zero-to-hero/artists/entities/artist.entity';
 import { FilterSongDto } from './dto/filter-song.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
-import { StorageService } from 'src/storage/storage.service';
-import { AudioService } from 'src/audio/audio.service';
+import { StorageService } from '@app/nest-zero-to-hero/storage/storage.service';
+import { AudioService } from '@app/nest-zero-to-hero/audio/audio.service';
 
 @Injectable()
 export class SongsService {

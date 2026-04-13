@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { ActiveUser } from '../interfaces/active-user.interface';
+import { ActiveUser } from '@app/contracts';
 
 export const User = createParamDecorator(
   (field: keyof ActiveUser | undefined, ctx: ExecutionContext) => {

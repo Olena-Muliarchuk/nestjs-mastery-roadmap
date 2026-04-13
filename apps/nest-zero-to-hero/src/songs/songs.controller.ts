@@ -17,13 +17,12 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { ConfigService } from '@nestjs/config';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { User } from '../auth/decorators/user.decorator';
-import { Role } from '../auth/enums/role.enum';
-import type { ActiveUser } from '../auth/interfaces/active-user.interface';
+import { Role, type ActiveUser } from '@app/contracts';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { FilterSongDto } from './dto/filter-song.dto';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Auth } from '@app/nest-zero-to-hero/auth/decorators/auth.decorator';
 import { CacheTTL } from '@nestjs/cache-manager';
-import { HttpCacheInterceptor } from 'src/common/interceptors/http-cache.interceptor';
+import { HttpCacheInterceptor } from '@app/nest-zero-to-hero/common/interceptors/http-cache.interceptor';
 @ApiTags('songs')
 @Controller('songs')
 export class SongsController {

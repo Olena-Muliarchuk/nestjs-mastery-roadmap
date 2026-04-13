@@ -16,8 +16,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Role } from '../auth/enums/role.enum';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from '@app/contracts';
+import { Auth } from '@app/nest-zero-to-hero/auth/decorators/auth.decorator';
 
 @ApiTags('users')
 @Controller('users')

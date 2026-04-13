@@ -5,9 +5,8 @@ import { Playlist } from './entities/playlist.entity';
 import { Song } from '../songs/song.entity';
 import { DataSource } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
-import { Role } from '../auth/enums/role.enum';
+import { Role, ActiveUser } from '@app/contracts';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
-import { ActiveUser } from '../auth/interfaces/active-user.interface';
 
 describe('PlaylistsService', () => {
   let service: PlaylistsService;

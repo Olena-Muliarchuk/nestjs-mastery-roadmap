@@ -2,7 +2,7 @@ import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../guards/roles.guard';
-import { Role } from '../enums/role.enum';
+import { Role } from '@app/contracts';
 import { ROLES_KEY } from './roles.decorator';
 
 /**

@@ -17,8 +17,8 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { Artist } from './entities/artist.entity';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Role } from 'src/auth/enums/role.enum';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from '@app/contracts';
+import { Auth } from '@app/nest-zero-to-hero/auth/decorators/auth.decorator';
 
 @ApiTags('artists')
 @Controller('artists')

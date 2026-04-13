@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, Index } from 'typeorm';
 import { Artist } from '../artists/entities/artist.entity';
-import { Playlist } from 'src/playlists/entities/playlist.entity';
+import { Playlist } from '@app/nest-zero-to-hero/playlists/entities/playlist.entity';
 
 export enum SongStatus {
   PROCESSING = 'processing',

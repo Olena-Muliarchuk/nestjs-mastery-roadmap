@@ -4,9 +4,9 @@ import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from './entities/playlist.entity';
 import { DataSource, DeleteResult, In, Repository } from 'typeorm';
-import { Song } from 'src/songs/song.entity';
-import { User } from 'src/users/entities/user.entity';
-import { ActiveUser } from 'src/auth/interfaces/active-user.interface';
+import { Song } from '@app/nest-zero-to-hero/songs/song.entity';
+import { User } from '@app/nest-zero-to-hero/users/entities/user.entity';
+import { ActiveUser } from '@app/contracts';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()

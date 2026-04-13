@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Role } from '../../auth/enums/role.enum';
-import { Playlist } from 'src/playlists/entities/playlist.entity';
+import { Role } from '@app/contracts';
+import { Playlist } from '@app/nest-zero-to-hero/playlists/entities/playlist.entity';
 
 @Entity('users')
 export class User {

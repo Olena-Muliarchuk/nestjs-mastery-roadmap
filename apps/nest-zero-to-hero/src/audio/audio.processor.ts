@@ -4,11 +4,11 @@ import { Job } from 'bullmq';
 import { AudioJobDto } from './interfaces/audio-job.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Song, SongStatus } from 'src/songs/song.entity';
-import { StorageService } from 'src/storage/storage.service';
+import { Song, SongStatus } from '@app/nest-zero-to-hero/songs/song.entity';
+import { StorageService } from '@app/nest-zero-to-hero/storage/storage.service';
 import * as mm from 'music-metadata';
 import { Readable } from 'stream';
-import { EventsGateway } from 'src/events/events.gateway';
+import { EventsGateway } from '@app/nest-zero-to-hero/events/events.gateway';
 
 @Processor('audio-queue')
 export class AudioProcessor extends WorkerHost {

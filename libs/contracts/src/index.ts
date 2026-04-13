@@ -1,2 +1,2 @@
-export * from './contracts.module';
-export * from './contracts.service';
+// libs/contracts/src/index.ts
+export * from './auth';

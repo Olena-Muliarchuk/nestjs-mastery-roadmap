@@ -1,5 +1,5 @@
-import { Song } from 'src/songs/song.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Song } from '@app/nest-zero-to-hero/songs/song.entity';
+import { User } from '@app/nest-zero-to-hero/users/entities/user.entity';
 import {
   Column,
   Entity,

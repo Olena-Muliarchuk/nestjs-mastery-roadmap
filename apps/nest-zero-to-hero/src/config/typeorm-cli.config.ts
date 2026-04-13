@@ -14,7 +14,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: isProd ? ['dist/**/*.entity.js'] : ['src/**/*.entity.ts'],
+  entities: isProd ? ['dist/**/*.entity.js'] : ['@app/nest-zero-to-hero/**/*.entity.ts'],
 
-  migrations: isProd ? ['dist/db/migrations/*.js'] : ['src/db/migrations/*.ts'],
+  migrations: isProd ? ['dist/db/migrations/*.js'] : ['@app/nest-zero-to-hero/db/migrations/*.ts'],
 });

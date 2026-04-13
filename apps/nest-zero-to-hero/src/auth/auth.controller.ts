@@ -9,10 +9,9 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto, type ActiveUser } from '@app/contracts';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import type { ActiveUser } from './interfaces/active-user.interface';
 import { User } from './decorators/user.decorator';
 
 @ApiTags('auth')

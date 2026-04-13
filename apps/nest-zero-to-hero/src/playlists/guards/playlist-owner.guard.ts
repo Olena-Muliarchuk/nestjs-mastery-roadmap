@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from '../entities/playlist.entity';
 import { Repository } from 'typeorm';
-import { ActiveUser } from 'src/auth/interfaces/active-user.interface';
+import { ActiveUser } from '@app/contracts';
 import { Request } from 'express';
 
 @Injectable()

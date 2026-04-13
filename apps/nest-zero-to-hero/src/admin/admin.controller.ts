@@ -9,12 +9,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { Role } from 'src/auth/enums/role.enum';
+import { Role } from '@app/contracts';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { Auth } from 'src/auth/decorators/auth.decorator';
-import { StorageService } from 'src/storage/storage.service';
+import { Auth } from '@app/nest-zero-to-hero/auth/decorators/auth.decorator';
+import { StorageService } from '@app/nest-zero-to-hero/storage/storage.service';
 
 @ApiTags('admin')
 @Controller('admin')

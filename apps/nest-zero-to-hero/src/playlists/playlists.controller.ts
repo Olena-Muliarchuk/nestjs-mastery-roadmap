@@ -20,10 +20,10 @@ import { Playlist } from './entities/playlist.entity';
 import { DeleteResult } from 'typeorm';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { User } from '../auth/decorators/user.decorator';
-import type { ActiveUser } from '../auth/interfaces/active-user.interface';
+import type { ActiveUser } from '@app/contracts';
 import { PlaylistOwnerGuard } from './guards/playlist-owner.guard';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Auth } from '@app/nest-zero-to-hero/auth/decorators/auth.decorator';
 
 @ApiTags('playlists')
 @Controller('playlists')

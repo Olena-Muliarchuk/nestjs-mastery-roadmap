@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from 'src/auth/enums/role.enum';
-import { UsersService } from 'src/users/users.service';
+import { Role } from '@app/contracts';
+import { UsersService } from '@app/nest-zero-to-hero/users/users.service';
 
 @Injectable()
 export class AdminService {
