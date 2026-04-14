@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import helmet from 'helmet';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,7 +42,20 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api', app, document);
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.TCP,
+    options: {
+      host: '127.0.0.1',
+      port: 3002,
+    },
+  });
+
+  await app.startAllMicroservices(); // TCP
+
   await app.listen(process.env.PORT ?? 3000);
+
+  console.log(`HTTP REST server is running on: http://localhost:3000`);
+  console.log(`TCP Microservice is listening on port: 3002`);
 }
 
 void bootstrap();

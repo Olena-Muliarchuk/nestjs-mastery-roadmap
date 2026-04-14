@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller()
 export class AppController {
@@ -16,5 +17,11 @@ export class AppController {
       status: 'ok',
       timestamp: new Date().toISOString(),
     };
+  }
+
+  @MessagePattern({ cmd: 'ping' })
+  pingCheck() {
+    console.log('Received ping via TCP!');
+    return { message: 'Pong from nest-zero-to-hero (TCP)', timestamp: new Date() };
   }
 }
