@@ -2,7 +2,13 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-# 🎵 NestJS Music API (Zero to Hero)
+# 🎵 NestJS Music API (Zero to Hero) — Phase 1: Classic Monolith
+
+> **⚠️ Project Evolution Notice**
+> This repository represents the **completed Phase 1** of the "Zero to Hero" educational project. It showcases a production-ready, single-process **Monolithic REST API**.
+>
+> The project has since evolved into a Distributed Microservices Architecture using a Monorepo.
+> **[Check out Phase 2: Microservices Repository here](https://github.com/Olena-Muliarchuk/nest-microservices-monorepo)**
 
 This is an educational project designed to guide a developer from "Hello World" to **Skilled backend developer** using the **NestJS** framework.
 
@@ -16,15 +22,16 @@ I'm building a **RESTful API for a Music Streaming Platform**, where users can b
 - **Language:** TypeScript (Strict Mode)
 - **Database:** PostgreSQL (via Docker)
 - **ORM:** TypeORM (Entities, Relations, QueryBuilder, Migrations)
-- **Authentication/Authorization:** JWT, Passport, BCrypt, Custom Guards (RBAC & Ownership)
+- **Security & Auth:** JWT, Passport, BCrypt, Custom Guards (RBAC & Ownership), Helmet (HTTP Headers), CORS
+- **Rate Limiting:** `@nestjs/throttler` (Anti-DDoS protection)
 - **Validation:** `class-validator`, `class-transformer`, Zod (for Environment Variables)
-- **Caching:** Redis (via Keyv & CacheManager)
-- **Scheduling:** @nestjs/schedule (Cron Jobs)
+- **Caching:** Redis (via Keyv & Custom HTTP Cache Interceptor)
+- **Scheduling:** `@nestjs/schedule` (Automated data cleanup)
 - **API Documentation:** Swagger / OpenAPI
-- **File Uploads:** Multer (handling MP3s and Images)
+- **File Management:** Multer, `@nestjs/serve-static` (Local fallback)
 - **Cloud Storage:** AWS SDK v3 (S3 API) / MinIO
 - **Background Processing:** BullMQ (Redis-backed queues), `music-metadata`
-- **Real-time Communication:** WebSockets (@nestjs/websockets, Socket.IO)
+- **Real-time Communication:** WebSockets (`@nestjs/websockets`, Socket.IO)
 - **Environment:** Docker Compose
 
 ---
@@ -43,11 +50,10 @@ npm install
 
 ### 3. Database Setup (Docker)
 
-Start the PostgreSQL container:
+Start the PostgreSQL, Redis, and MinIO containers:
 
 ```bash
 docker-compose up -d
-
 ```
 
 ### 4. Environment Configuration
@@ -83,7 +89,6 @@ AWS_S3_ENDPOINT=http://localhost:9000
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
 AWS_S3_BUCKET_NAME=nest-music-uploads
-
 ```
 
 ### 5. Running the App
@@ -109,7 +114,7 @@ Once running, access the **Swagger API Documentation** at: `http://localhost:300
 
 ## 🗺 Roadmap & Progress
 
-I'm following a strict "Zero to Hero" roadmap based on official NestJS documentation and enterprise standards.
+This repository implements **Blocks 1–6** of a "Zero to Hero" NestJS mastery roadmap - covering all monolithic foundations from basic architecture to E2E testing.
 
 ### 🟢 Block 1: Foundations
 
@@ -119,23 +124,24 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Modules:** Modular Architecture, imports/exports features
 * [x] **Middleware:** Global HTTP Request Logging
 * [x] **Exception Filters:** Global unified error handling format
+* [x] **Network Security:** Helmet (HTTP header protection) & CORS configuration
 
 ### 🟢 Block 2: Data & Validation
 
-* [x] **Pipes:** `ValidationPipe` (whitelist, forbidNonWhitelisted), `ParseIntPipe`
-* [x] **DTOs:** Input validation using `class-validator`
-* [x] **Serialization:** Response transformation (`@Exclude` password) using `ClassSerializerInterceptor`
+  * [x] **Pipes:** `ValidationPipe` (whitelist, forbidNonWhitelisted), `ParseIntPipe`
+  * [x] **DTOs:** Input validation using `class-validator`
+  * [x] **Serialization:** Response transformation (`@Exclude` password) using `ClassSerializerInterceptor`
 
 ### 🟢 Block 3: Database & ORM
 
-* [x] **TypeORM Setup:** PostgreSQL connection
-* [x] **Entities & Relations:** One-to-Many & Many-to-Many (Playlists <-> Songs <-> Artists)
-* [x] **Migrations:** Database version control (Current status: `synchronize: false`)
-* [x] **Pagination:** Implementing `nestjs-typeorm-paginate`
-* [x] **QueryBuilder:** Complex case-insensitive search and dynamic filtering
-* [x] **Transactions:** Ensuring data consistency (e.g., Playlist creation)
-* [x] **Soft Deletes:** `@DeleteDateColumn` and data restoration
-* [x] **Performance:** Database Indexing (Composite and Single-column indices)
+  * [x] **TypeORM Setup:** PostgreSQL connection
+  * [x] **Entities & Relations:** One-to-Many & Many-to-Many (Playlists \<-\> Songs \<-\> Artists)
+  * [x] **Migrations:** Database version control (Current status: `synchronize: false`)
+  * [x] **Pagination:** Implementing `nestjs-typeorm-paginate`
+  * [x] **QueryBuilder:** Complex case-insensitive search and dynamic filtering
+  * [x] **Transactions:** Ensuring data consistency (e.g., Playlist creation)
+  * [x] **Soft Deletes:** `@DeleteDateColumn` and data restoration
+  * [x] **Performance:** Database Indexing (Composite and Single-column indices)
 
 ### 🟢 Block 4: Security & Auth
 
@@ -143,6 +149,7 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 * [x] **Authentication:** Login logic & JWT generation
 * [x] **JWT Strategy:** Passport integration, Bearer Token validation
 * [x] **Guards:** Protecting routes with `AuthGuard`
+* [x] **Rate Limiting:** Global API protection against brute-force using `ThrottlerGuard`
 * [x] **Custom Decorators:** `@User()` & `@Roles()` decorators
 * [x] **Authorization (RBAC):** `Admin` vs `User` roles, `RolesGuard`
 * [x] **Ownership Logic:** `PlaylistOwnerGuard` protecting user-specific resources
@@ -151,40 +158,33 @@ I'm following a strict "Zero to Hero" roadmap based on official NestJS documenta
 
 * [x] **ConfigModule:** Environment validation with **Zod**
 * [x] **Standalone Applications:** Custom Database Seeder (`npm run seed`)
-* [x] **File Upload:** Handling audio/image files with Multer (`AdminController`)
+* [x] **File Processing:** Handling audio/image files with Multer (`AdminController`)
+* [x] **Static Files:** Serving local assets via `ServeStaticModule`
 * [x] **Refresh Tokens:** Secure token rotation
-* [x] **Caching:** Redis integration
-* [x] **Task Scheduling:** Cron jobs (`@nestjs/schedule`)
-* [x] **Cloud Storage:** AWS S3 / MinIO integration (Presigned URLs, Garbage Collection)
-* [x] **Asynchronous Processing (Queues):** BullMQ & Redis integration
+* [x] **Caching:** Redis integration with Custom Interceptors
+* [x] **Task Scheduling:** Cron jobs (e.g., automated GDPR-compliant cleanup of soft-deleted users)
+* [x] **Cloud Storage:** AWS S3 / MinIO integration (Presigned URLs)
+* [x] **Asynchronous Processing (Queues):** BullMQ & Redis integration for heavy tasks
 * [x] **WebSockets:** Real-time communication (Gateway, Socket.IO)
 
 ### 🟢 Block 6: Testing & DevOps
 
-* [x] **Unit Testing:** Jest, mocking services/repositories, stream memory management
-* [x] **E2E Testing:** Supertest, dockerized test DB, overriding providers
-* [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
-* [x] **Docker:** Multi-stage production builds, internal networking, healthchecks
-* [x] **Database Migrations in Prod:** Compiling migrations for Docker execution
+  * [x] **Unit Testing:** Jest, mocking services/repositories, stream memory management
+  * [x] **E2E Testing:** Supertest, dockerized test DB, overriding providers
+  * [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
+  * [x] **Docker:** Multi-stage production builds, internal networking, healthchecks
+  * [x] **Database Migrations in Prod:** Compiling migrations for Docker execution
 
-### 🟡 Block 7: Microservices Evolution & NestJS Advanced (Current Focus 📍)
+-----
 
-* [ ] **Monorepo Infrastructure:** Migrating to a Workspace (`apps/` and `libs/`), centralized `.env` management.
-* [ ] **API Gateway (BFF):** Creating a single entry point.
-* [ ] **Advanced Shared Modules (`libs/`):** Building Dynamic Modules (`forRootAsync`) and Custom Providers (`useFactory`) for shared infrastructure.
-* [ ] **Inter-service Security:** Implementing Trust/Auth bridging between the Gateway and internal microservices.
-* [ ] **Auth Microservice (TCP/Redis):** Extracting Authentication using standard message passing.
-* [ ] **Worker Isolation & Resilience:** Extracting `AudioProcessor` via BullMQ, implementing **Dead Letter Queues (DLQ)** for failed jobs.
-* [ ] **Event-Driven Architecture (Kafka):** Implementing async Pub/Sub events with basic **Idempotency** strategies.
-* [ ] **High-Performance RPC (gRPC):** Creating a `MetadataService` using ultra-fast binary communication.
+### ⏭️ Block 7: Microservices Evolution (Moved to Phase 2)
 
-### ⚪️ Block 8: Enterprise Patterns, Resilience & Observability (Future)
+*Development of the API Gateway, Monorepo workspace (`apps/` & `libs/`), TCP microservices, and event-driven architecture has been moved to a dedicated repository.*
+ **[Follow the Microservices Journey here](https://github.com/Olena-Muliarchuk/nest-microservices-monorepo)**
 
-* [ ] **Health Checks & Graceful Shutdown:** Upgrading to `@nestjs/terminus` for true service readiness probes.
-* [ ] **Distributed Tracing & Centralized Logging:** Implementing Correlation IDs (via Interceptors) to track requests across the microservices mesh.
-* [ ] **Circuit Breaker Pattern:** Preventing cascading failures when a downstream microservice is dead.
-* [ ] **Distributed Transactions:** Handling cross-service data consistency (Saga Pattern).
-* [ ] **CQRS:** Command Query Responsibility Segregation for separating read/write databases.
+### ⏭️ Block 8: Enterprise Patterns, Resilience & Observability (Planned for Phase 3)
+
+*Advanced topics like Circuit Breakers, Distributed Tracing, Health Checks, and CQRS will be implemented in the microservices monorepo.*
 
 ---
 
