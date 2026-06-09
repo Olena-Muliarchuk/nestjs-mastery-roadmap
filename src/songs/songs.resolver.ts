@@ -8,6 +8,9 @@ export class SongsResolver {
 
   @Query(() => SongType, { name: 'song', nullable: true })
   async getSong(@Args('id', { type: () => Int }) id: number) {
+    if (id <= 0) {
+      throw new Error('ID must be a positive integer');
+    }
     return this.songsService.findOne(id);
   }
 }
