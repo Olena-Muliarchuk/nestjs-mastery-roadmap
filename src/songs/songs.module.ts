@@ -6,10 +6,11 @@ import { Song } from './song.entity';
 import { Artist } from 'src/artists/entities/artist.entity';
 import { StorageModule } from 'src/storage/storage.module';
 import { AudioModule } from 'src/audio/audio.module';
+import { SongsResolver } from './songs.resolver';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Song, Artist]), StorageModule, AudioModule],
   controllers: [SongsController],
-  providers: [SongsService],
+  providers: [SongsService, SongsResolver],
 })
 export class SongsModule {}

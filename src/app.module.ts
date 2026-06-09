@@ -24,6 +24,8 @@ import { StorageModule } from './storage/storage.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AudioModule } from './audio/audio.module';
 import { EventsModule } from './events/events.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
@@ -59,6 +61,21 @@ import { EventsModule } from './events/events.module';
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
+
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        playground: false,
+        graphiql: configService.get<string>('NODE_ENV') !== 'production',
+        context: ({ req }) => ({ req }),
+        path: '/graphql',
+      }),
+    }),
+
     SongsModule,
     ArtistsModule,
     UsersModule,
