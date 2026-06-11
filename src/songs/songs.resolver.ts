@@ -1,21 +1,22 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Root } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import { ParseIntPipe } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { SongType } from './models/song.type';
 import { CreateSongInput } from './inputs/create-song.input';
-import { BadRequestException } from '@nestjs/common';
 import { UpdateSongInput } from './inputs/update-song.input';
 import { ArtistsType } from 'src/artists/models/artists.type';
 import { Song } from './song.entity';
+import { ArtistsLoader } from './loaders/artists.loader';
 
 @Resolver(() => SongType)
 export class SongsResolver {
-  constructor(private readonly songsService: SongsService) {}
+  constructor(
+    private readonly songsService: SongsService,
+    private readonly artistsLoader: ArtistsLoader,
+  ) {}
 
   @Query(() => SongType, { name: 'song', nullable: true })
-  async getSong(@Args('id', { type: () => Int }) id: number) {
-    if (id <= 0) {
-      throw new BadRequestException('ID must be a positive integer');
-    }
+  async getSong(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
     return await this.songsService.findOne(id);
   }
 
@@ -32,10 +33,7 @@ export class SongsResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteSong(@Args('id', { type: () => Int }) id: number) {
-    if (id <= 0) {
-      throw new BadRequestException('ID must be a positive integer');
-    }
+  async deleteSong(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
     await this.songsService.delete(id);
     return true;
   }
@@ -55,7 +53,7 @@ export class SongsResolver {
   }
 
   @ResolveField(() => [ArtistsType])
-  async artists(@Root() song: Song) {
-    return await this.songsService.findArtistsBySongId(song.id);
+  async artists(@Parent() song: Song) {
+    return this.artistsLoader.batchArtists.load(song.id);
   }
 }

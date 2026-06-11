@@ -7,10 +7,12 @@ import { Artist } from 'src/artists/entities/artist.entity';
 import { StorageModule } from 'src/storage/storage.module';
 import { AudioModule } from 'src/audio/audio.module';
 import { SongsResolver } from './songs.resolver';
+import { ArtistsModule } from 'src/artists/artists.module';
+import { ArtistsLoader } from './loaders/artists.loader';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song, Artist]), StorageModule, AudioModule],
+  imports: [TypeOrmModule.forFeature([Song, Artist]), StorageModule, AudioModule, ArtistsModule],
   controllers: [SongsController],
-  providers: [SongsService, SongsResolver],
+  providers: [SongsService, SongsResolver, ArtistsLoader],
 })
 export class SongsModule {}
