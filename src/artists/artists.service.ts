@@ -62,24 +62,30 @@ export class ArtistsService {
   }
 
   async findArtistsBySongIds(songIds: number[]): Promise<Map<number, Artist[]>> {
-    const songs = await this.artistRepository
+    const rows = await this.artistRepository
       .createQueryBuilder('artist')
-      .innerJoinAndSelect('artist.songs', 'song')
+      .innerJoin('artist.songs', 'song')
+      .addSelect('song.id', 'songId')
       .where('song.id IN (:...songIds)', { songIds })
-      .getMany();
+      .getRawMany<{
+        artist_id: number;
+        artist_name: string;
+        songId: number;
+      }>();
 
-    const map = new Map<number, Artist[]>();
-
-    for (const songId of songIds) {
-      map.set(songId, []);
+    const artistCache = new Map<number, Artist>();
+    for (const row of rows) {
+      if (!artistCache.has(row.artist_id)) {
+        const artist = new Artist();
+        artist.id = row.artist_id;
+        artist.name = row.artist_name;
+        artistCache.set(row.artist_id, artist);
+      }
     }
 
-    for (const artist of songs) {
-      for (const song of artist.songs) {
-        if (map.has(song.id)) {
-          map.get(song.id)!.push(artist);
-        }
-      }
+    const map = new Map<number, Artist[]>(songIds.map((id) => [id, []]));
+    for (const row of rows) {
+      map.get(row.songId)?.push(artistCache.get(row.artist_id)!);
     }
 
     return map;
