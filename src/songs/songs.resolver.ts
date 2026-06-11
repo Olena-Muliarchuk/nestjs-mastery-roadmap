@@ -3,6 +3,7 @@ import { SongsService } from './songs.service';
 import { SongType } from './models/song.type';
 import { CreateSongInput } from './inputs/create-song.input';
 import { BadRequestException } from '@nestjs/common';
+import { UpdateSongInput } from './inputs/update-song.input';
 
 @Resolver(() => SongType)
 export class SongsResolver {
@@ -35,5 +36,19 @@ export class SongsResolver {
     }
     await this.songsService.delete(id);
     return true;
+  }
+
+  @Mutation(() => SongType)
+  async updateSong(@Args('updateSongInput') updateSongInput: UpdateSongInput) {
+    const { id, releasedDate, ...edits } = updateSongInput;
+
+    const updateSongDto = {
+      ...edits,
+      ...(releasedDate && { releasedDate: releasedDate.toISOString() }),
+    };
+
+    await this.songsService.update(id, updateSongDto);
+
+    return this.songsService.findOne(id);
   }
 }
