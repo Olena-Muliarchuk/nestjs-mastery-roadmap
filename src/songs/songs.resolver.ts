@@ -1,9 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Root } from '@nestjs/graphql';
 import { SongsService } from './songs.service';
 import { SongType } from './models/song.type';
 import { CreateSongInput } from './inputs/create-song.input';
 import { BadRequestException } from '@nestjs/common';
 import { UpdateSongInput } from './inputs/update-song.input';
+import { ArtistsType } from 'src/artists/models/artists.type';
+import { Song } from './song.entity';
 
 @Resolver(() => SongType)
 export class SongsResolver {
@@ -14,7 +16,7 @@ export class SongsResolver {
     if (id <= 0) {
       throw new BadRequestException('ID must be a positive integer');
     }
-    return this.songsService.findOne(id);
+    return await this.songsService.findOne(id);
   }
 
   @Mutation(() => SongType)
@@ -26,7 +28,7 @@ export class SongsResolver {
       releasedDate: createSongInput.releasedDate.toISOString(),
     };
 
-    return this.songsService.create(createSongDto, MOCK_USER_ID);
+    return await this.songsService.create(createSongDto, MOCK_USER_ID);
   }
 
   @Mutation(() => Boolean)
@@ -49,6 +51,11 @@ export class SongsResolver {
 
     await this.songsService.update(id, updateSongDto);
 
-    return this.songsService.findOne(id);
+    return await this.songsService.findOne(id);
+  }
+
+  @ResolveField(() => [ArtistsType])
+  async artists(@Root() song: Song) {
+    return await this.songsService.findArtistsBySongId(song.id);
   }
 }

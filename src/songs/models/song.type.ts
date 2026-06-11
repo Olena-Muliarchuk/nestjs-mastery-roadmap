@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ArtistsType } from '../../artists/models/artists.type';
 
 @ObjectType('Song')
 export class SongType {
@@ -16,4 +17,7 @@ export class SongType {
 
   @Field({ nullable: true })
   lyrics?: string;
+
+  @Field(() => [ArtistsType], { nullable: true })
+  artists?: ArtistsType[];
 }
