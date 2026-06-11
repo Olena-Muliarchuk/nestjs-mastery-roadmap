@@ -10,4 +10,10 @@ export class SongType {
 
   @Field({ nullable: true })
   url?: string;
+
+  @Field({ nullable: true })
+  duration?: string;
+
+  @Field({ nullable: true })
+  lyrics?: string;
 }

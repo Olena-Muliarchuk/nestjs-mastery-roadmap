@@ -18,6 +18,12 @@ export class GqlThrottlerGuard extends ThrottlerGuard {
     const gqlCtx = GqlExecutionContext.create(context);
     const ctx = gqlCtx.getContext<GqlContext>();
 
+    if (!ctx.req || !ctx.res) {
+      throw new Error(
+        'GraphQL context missing req or res. Ensure context is configured as: context: ({ req, res }) => ({ req, res })',
+      );
+    }
+
     return {
       req: ctx.req,
       res: ctx.res,

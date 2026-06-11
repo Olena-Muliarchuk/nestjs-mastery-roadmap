@@ -19,7 +19,7 @@ async function bootstrap() {
     helmet({
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: isProd
-        ? undefined
+        ? false
         : {
             directives: {
               defaultSrc: [`'self'`],

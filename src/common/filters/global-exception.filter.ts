@@ -15,7 +15,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   catch(exception: unknown, host: ArgumentsHost) {
     if (host.getType<GqlContextType>() === 'graphql') {
-      return exception;
+      if (exception instanceof HttpException) {
+        return exception;
+      }
+
+      this.logger.error(
+        `[Unhandled GraphQL Exception]`,
+        exception instanceof Error ? exception.stack : String(exception),
+      );
+
+      return new Error('Internal server error');
     }
 
     const ctx = host.switchToHttp();
