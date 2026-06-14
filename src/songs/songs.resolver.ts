@@ -8,6 +8,11 @@ import { ArtistsType } from 'src/artists/models/artists.type';
 import { Song } from './song.entity';
 import { ArtistsLoader } from './loaders/artists.loader';
 
+import { Auth } from '../auth/decorators/auth.decorator';
+import { User } from '../auth/decorators/user.decorator';
+import type { ActiveUser } from '../auth/interfaces/active-user.interface';
+import { Role } from '../auth/enums/role.enum';
+
 @Resolver(() => SongType)
 export class SongsResolver {
   constructor(
@@ -21,24 +26,28 @@ export class SongsResolver {
   }
 
   @Mutation(() => SongType)
-  async createSong(@Args('createSongInput') createSongInput: CreateSongInput) {
-    const MOCK_USER_ID = 1;
-
+  @Auth()
+  async createSong(
+    @Args('createSongInput') createSongInput: CreateSongInput,
+    @User() user: ActiveUser,
+  ) {
     const createSongDto = {
       ...createSongInput,
       releasedDate: createSongInput.releasedDate.toISOString(),
     };
 
-    return await this.songsService.create(createSongDto, MOCK_USER_ID);
+    return await this.songsService.create(createSongDto, user.userId);
   }
 
   @Mutation(() => Boolean)
+  @Auth(Role.Admin)
   async deleteSong(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
     await this.songsService.delete(id);
     return true;
   }
 
   @Mutation(() => SongType)
+  @Auth(Role.Admin)
   async updateSong(@Args('updateSongInput') updateSongInput: UpdateSongInput) {
     const { id, releasedDate, ...edits } = updateSongInput;
 

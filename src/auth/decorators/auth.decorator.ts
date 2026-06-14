@@ -1,9 +1,9 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../guards/roles.guard';
 import { Role } from '../enums/role.enum';
 import { ROLES_KEY } from './roles.decorator';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 /**
  * Combined authentication and authorization decorator
@@ -26,7 +26,7 @@ import { ROLES_KEY } from './roles.decorator';
 export function Auth(...roles: Role[]) {
   const decorators = [
     ApiBearerAuth(),
-    UseGuards(AuthGuard('jwt')),
+    UseGuards(JwtAuthGuard),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   ];
 
