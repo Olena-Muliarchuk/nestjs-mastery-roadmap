@@ -27,6 +27,7 @@ import { EventsModule } from './events/events.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard';
+import { ComplexityPlugin } from './common/plugins/complexity.plugin';
 
 @Module({
   imports: [
@@ -94,6 +95,7 @@ import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard';
       provide: APP_GUARD,
       useClass: GqlThrottlerGuard,
     },
+    ComplexityPlugin,
   ],
 })
 export class AppModule implements NestModule {

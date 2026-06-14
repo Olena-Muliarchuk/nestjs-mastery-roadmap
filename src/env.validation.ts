@@ -26,6 +26,8 @@ export const envSchema = z.object({
   AWS_ACCESS_KEY_ID: z.string().min(1),
   AWS_SECRET_ACCESS_KEY: z.string().min(1),
   AWS_S3_BUCKET_NAME: z.string().min(1),
+
+  GRAPHQL_MAX_COMPLEXITY: z.coerce.number().int().positive().max(500).default(20),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

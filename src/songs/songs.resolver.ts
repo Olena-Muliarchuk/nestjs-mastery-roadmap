@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+  ComplexityEstimatorArgs,
+} from '@nestjs/graphql';
 import { ParseIntPipe } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { SongType } from './models/song.type';
@@ -27,7 +36,13 @@ export class SongsResolver {
     return await this.songsService.findOne(id);
   }
 
-  @Query(() => PaginatedSongsType, { name: 'songs' })
+  @Query(() => PaginatedSongsType, {
+    name: 'songs',
+    complexity: (options: ComplexityEstimatorArgs) => {
+      const limit = typeof options.args['limit'] === 'number' ? options.args['limit'] : 10;
+      return limit * options.childComplexity;
+    },
+  })
   async getSongs(@Args() filterSongArgs: FilterSongArgs) {
     const { page, limit } = filterSongArgs;
 
