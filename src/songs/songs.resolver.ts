@@ -12,6 +12,8 @@ import { Auth } from '../auth/decorators/auth.decorator';
 import { User } from '../auth/decorators/user.decorator';
 import type { ActiveUser } from '../auth/interfaces/active-user.interface';
 import { Role } from '../auth/enums/role.enum';
+import { PaginatedSongsType } from './models/paginated-songs.type';
+import { FilterSongArgs } from './args/filter-song.args';
 
 @Resolver(() => SongType)
 export class SongsResolver {
@@ -23,6 +25,20 @@ export class SongsResolver {
   @Query(() => SongType, { name: 'song', nullable: true })
   async getSong(@Args('id', { type: () => Int }, ParseIntPipe) id: number) {
     return await this.songsService.findOne(id);
+  }
+
+  @Query(() => PaginatedSongsType, { name: 'songs' })
+  async getSongs(@Args() filterSongArgs: FilterSongArgs) {
+    const { page, limit } = filterSongArgs;
+
+    return this.songsService.paginate(
+      {
+        page,
+        limit,
+        route: '',
+      },
+      filterSongArgs,
+    );
   }
 
   @Mutation(() => SongType)
