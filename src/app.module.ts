@@ -15,7 +15,7 @@ import { join } from 'path';
 import { SeedModule } from './seed/seed.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { redisAsyncConfig } from './config/redis.config';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -24,6 +24,10 @@ import { StorageModule } from './storage/storage.module';
 import { BullModule } from '@nestjs/bullmq';
 import { AudioModule } from './audio/audio.module';
 import { EventsModule } from './events/events.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard';
+import { ComplexityPlugin } from './common/plugins/complexity.plugin';
 
 @Module({
   imports: [
@@ -59,6 +63,20 @@ import { EventsModule } from './events/events.module';
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
+
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        graphiql: configService.get<string>('NODE_ENV') !== 'production',
+        context: ({ req, res }) => ({ req, res }),
+        path: '/graphql',
+      }),
+    }),
+
     SongsModule,
     ArtistsModule,
     UsersModule,
@@ -75,8 +93,9 @@ import { EventsModule } from './events/events.module';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: GqlThrottlerGuard,
     },
+    ComplexityPlugin,
   ],
 })
 export class AppModule implements NestModule {

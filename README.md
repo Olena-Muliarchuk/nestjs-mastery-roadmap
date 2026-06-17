@@ -31,8 +31,9 @@ I'm building a **RESTful API for a Music Streaming Platform**, where users can b
 - **File Management:** Multer, `@nestjs/serve-static` (Local fallback)
 - **Cloud Storage:** AWS SDK v3 (S3 API) / MinIO
 - **Background Processing:** BullMQ (Redis-backed queues), `music-metadata`
-- **Real-time Communication:** WebSockets (`@nestjs/websockets`, Socket.IO)
+- **Real-time Communication:** WebSockets. Hybrid approach (`@nestjs/websockets`, Socket.IO for events, REST/GraphQL for data transfer)
 - **Environment:** Docker Compose
+- **GraphQL API:** Code-First approach, Apollo Server, DataLoaders (N+1 optimization), Query Complexity
 
 ---
 
@@ -174,6 +175,16 @@ This repository implements **Blocks 1–6** of a "Zero to Hero" NestJS mastery r
   * [x] **Documentation:** Swagger/OpenAPI (`@ApiTags`, `@ApiOperation`)
   * [x] **Docker:** Multi-stage production builds, internal networking, healthchecks
   * [x] **Database Migrations in Prod:** Compiling migrations for Docker execution
+
+### 🟢 Block 7: GraphQL Integration (Hybrid Architecture)
+
+* [x] **Code-First Schema:** Generating GraphQL schema using TypeScript classes and `@nestjs/graphql`.
+* [x] **Queries & Mutations:** CRUD operations for the music catalog.
+* [x] **Performance Optimization:** Solving the classic N+1 problem using `DataLoader` for relational data.
+* [x] **Context & Security:** Adapting REST-based JWT Guards and Custom Decorators to the GraphQL Execution Context.
+* [x] **Error Handling:** Custom Global Exception Filter to map `HttpException` to `GraphQLError` formats.
+* [x] **Pagination & Filtering:** Implementing reusable `ArgsType` for complex, paginated queries.
+* [x] **Query Complexity:** Protecting the database from deeply nested DoS queries using `graphql-query-complexity`.
 
 -----
 

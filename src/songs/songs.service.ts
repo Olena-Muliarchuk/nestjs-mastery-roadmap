@@ -185,4 +185,12 @@ export class SongsService {
       this.logger.error(`Cache invalidation failed: ${message}`);
     }
   }
+
+  async findArtistsBySongId(songId: number): Promise<Artist[]> {
+    const song = await this.songRepository.findOne({
+      where: { id: songId },
+      relations: ['artists'],
+    });
+    return song?.artists || [];
+  }
 }

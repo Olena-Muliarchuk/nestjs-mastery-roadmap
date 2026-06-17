@@ -2,6 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Response as ExpressResponse } from 'express';
+import { GqlContextType } from '@nestjs/graphql';
 
 export interface Response<T> {
   data: T;
@@ -12,6 +13,9 @@ export interface Response<T> {
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<T, Response<T> | T> {
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<Response<T> | T> {
+    if (context.getType<GqlContextType>() === 'graphql') {
+      return next.handle();
+    }
     return next.handle().pipe(
       map((data) => {
         const response = context.switchToHttp().getResponse<ExpressResponse>();

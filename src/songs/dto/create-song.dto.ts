@@ -10,27 +10,27 @@ import {
 export class CreateSongDto {
   @IsString({ message: 'Name is string' })
   @IsNotEmpty()
-  readonly title: string;
+  readonly title!: string;
 
   @IsNotEmpty()
   @IsArray()
-  readonly artists: number[];
+  readonly artists!: number[];
 
   @IsDateString()
   @IsNotEmpty()
-  readonly releasedDate: string;
+  readonly releasedDate!: string;
 
   @IsMilitaryTime()
   @IsOptional()
-  readonly duration: string;
+  readonly duration?: string;
 
   @IsString()
   @IsOptional()
-  readonly lyrics: string;
+  readonly lyrics?: string;
 
   @IsString()
   @IsOptional()
-  readonly url: string;
+  readonly url?: string;
 
   @IsString()
   @IsOptional()

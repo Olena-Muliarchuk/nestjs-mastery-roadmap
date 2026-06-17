@@ -3,7 +3,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, UpdateResult, DeleteResult, In } from 'typeorm';
 import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()
@@ -55,5 +55,40 @@ export class ArtistsService {
     }
 
     return result;
+  }
+
+  async findByIds(ids: number[]): Promise<Artist[]> {
+    return this.artistRepository.findBy({ id: In(ids) });
+  }
+
+  async findArtistsBySongIds(songIds: number[]): Promise<Map<number, Artist[]>> {
+    const rows = await this.artistRepository
+      .createQueryBuilder('artist')
+      .select(['artist.id', 'artist.name'])
+      .innerJoin('artist.songs', 'song')
+      .addSelect('song.id', 'songId')
+      .where('song.id IN (:...songIds)', { songIds })
+      .getRawMany<{
+        artist_id: number;
+        artist_name: string;
+        songId: number;
+      }>();
+
+    const artistCache = new Map<number, Artist>();
+    for (const row of rows) {
+      if (!artistCache.has(row.artist_id)) {
+        const artist = new Artist();
+        artist.id = row.artist_id;
+        artist.name = row.artist_name;
+        artistCache.set(row.artist_id, artist);
+      }
+    }
+
+    const map = new Map<number, Artist[]>(songIds.map((id) => [id, []]));
+    for (const row of rows) {
+      map.get(row.songId)?.push(artistCache.get(row.artist_id)!);
+    }
+
+    return map;
   }
 }
