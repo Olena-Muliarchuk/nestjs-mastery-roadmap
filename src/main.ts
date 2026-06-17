@@ -19,8 +19,7 @@ async function bootstrap() {
     helmet({
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: isProd
-        ? false
-        : {
+        ? {
             directives: {
               defaultSrc: [`'self'`],
               scriptSrc: [`'self'`, `'unsafe-inline'`, 'unpkg.com'],
@@ -29,7 +28,8 @@ async function bootstrap() {
               connectSrc: [`'self'`, 'unpkg.com'],
               fontSrc: [`'self'`, 'unpkg.com', 'data:'],
             },
-          },
+          }
+        : false,
     }),
   );
 

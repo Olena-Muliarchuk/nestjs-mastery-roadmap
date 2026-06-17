@@ -64,6 +64,7 @@ export class ArtistsService {
   async findArtistsBySongIds(songIds: number[]): Promise<Map<number, Artist[]>> {
     const rows = await this.artistRepository
       .createQueryBuilder('artist')
+      .select(['artist.id', 'artist.name'])
       .innerJoin('artist.songs', 'song')
       .addSelect('song.id', 'songId')
       .where('song.id IN (:...songIds)', { songIds })
