@@ -115,7 +115,7 @@ Once running, access the **Swagger API Documentation** at: `http://localhost:300
 
 ## 🗺 Roadmap & Progress
 
-This repository implements **Blocks 1–6** of a "Zero to Hero" NestJS mastery roadmap - covering all monolithic foundations from basic architecture to E2E testing.
+This repository implements **Blocks 1–7** of a "Zero to Hero" NestJS mastery roadmap - covering all monolithic foundations from basic architecture to E2E testing.
 
 ### 🟢 Block 1: Foundations
 
@@ -188,12 +188,12 @@ This repository implements **Blocks 1–6** of a "Zero to Hero" NestJS mastery r
 
 -----
 
-### ⏭️ Block 7: Microservices Evolution (Moved to Phase 2)
+### ⏭️ Block 8: Microservices Evolution (Moved to Phase 2)
 
 *Development of the API Gateway, Monorepo workspace (`apps/` & `libs/`), TCP microservices, and event-driven architecture has been moved to a dedicated repository.*
  **[Follow the Microservices Journey here](https://github.com/Olena-Muliarchuk/nest-microservices-monorepo)**
 
-### ⏭️ Block 8: Enterprise Patterns, Resilience & Observability (Planned for Phase 3)
+### ⏭️ Block 9: Enterprise Patterns, Resilience & Observability (Planned for Phase 3)
 
 *Advanced topics like Circuit Breakers, Distributed Tracing, Health Checks, and CQRS will be implemented in the microservices monorepo.*
 
